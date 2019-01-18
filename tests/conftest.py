@@ -17,32 +17,16 @@ def main():
 
 
 @pytest.fixture
-def testdb_cnxn(main):
+def cnxn(main):
     """testdb connection fixture"""
-    testdb_cnxn = psycopg2.connect(os.getenv("TESTING_DB_URI"))
-    yield testdb_cnxn
-    testdb_cnxn.close()
+    cnxn = psycopg2.connect(os.getenv("TESTING_DB_URI"))
+    yield cnxn
+    cnxn.close()
 
 
 @pytest.fixture
-def testdb_cursor(testdb_cnxn):
+def cursor(cnxn):
     """testdb cursor fixture"""
-    testdb_cursor = testdb_cnxn.cursor(cursor_factory=RealDictCursor)
-    yield testdb_cursor
-    testdb_cnxn.rollback()
-
-
-@pytest.fixture
-def devdb_cnxn(main):
-    """devdb connection fixture"""
-    devdb_cnxn = psycopg2.connect(os.getenv("DEV_DB_URI"))
-    yield devdb_cnxn
-    devdb_cnxn.close()
-
-
-@pytest.fixture
-def devdb_cursor(devdb_cnxn):
-    """devdb cursor fixture"""
-    devdb_cursor = devdb_cnxn.cursor(cursor_factory=RealDictCursor)
-    yield devdb_cursor
-    devdb_cnxn.rollback()
+    cursor = cnxn.cursor(cursor_factory=RealDictCursor)
+    yield cursor
+    cnxn.rollback()
