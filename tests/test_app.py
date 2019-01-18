@@ -1,4 +1,4 @@
-def test_app_factory(main):
+def test_app(main):
     """test root route -- base test just to confirm things are working"""
     res = b"Hello World!"
     response = main.get('/api/v2/')
