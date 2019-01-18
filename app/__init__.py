@@ -2,7 +2,6 @@ from flask import Flask, Blueprint
 from flask_restful import Api, Resource
 
 from config import APP_CONFIG
-from .utils.error_handlers import ERRORS
 
 
 def create_app(default_config):
@@ -10,7 +9,7 @@ def create_app(default_config):
     app = Flask(__name__)
     app.config.from_object(APP_CONFIG[default_config])
     api_bp = Blueprint('api', __name__)
-    api = Api(api_bp, errors=ERRORS)
+    api = Api(api_bp)
 
     # register blueprint
     app.register_blueprint(api_bp, url_prefix='/api/v2')
