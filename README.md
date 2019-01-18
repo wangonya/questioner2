@@ -1,6 +1,9 @@
 # Questioner
 Crowd-source questions for a meetup. Questioner helps the meetup organizer prioritize questions to be answered. Other users can vote on asked questions and they bubble to the top or bottom of the log.
 
+[![Build Status](https://travis-ci.org/wangonya/questioner2.svg?branch=develop)](https://travis-ci.org/wangonya/questioner2)
+[![Coverage Status](https://coveralls.io/repos/github/wangonya/questioner2/badge.svg?branch=develop)](https://coveralls.io/github/wangonya/questioner2?branch=develop)
+[![Maintainability](https://api.codeclimate.com/v1/badges/0bf11a400ebb58b88a1e/maintainability)](https://codeclimate.com/github/wangonya/questioner2/maintainability)
 # Api endpoints
 |Endpoint  |Functionality   |Route   |
 |---|---|---|
