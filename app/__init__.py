@@ -2,6 +2,7 @@ from flask import Flask, Blueprint
 from flask_restful import Api, Resource
 
 from config import APP_CONFIG
+from .auth.signup import Signup
 
 
 def create_app(default_config):
@@ -23,5 +24,6 @@ def create_app(default_config):
 
     # register routes
     api.add_resource(HelloWorld, '/')
+    api.add_resource(Signup, '/auth/signup')
 
     return app
