@@ -7,6 +7,8 @@ from psycopg2.extras import RealDictCursor
 
 import app
 from app.auth.models import AuthModel
+from app.db import CreateTables
+from app.utils.validators import DbValidators
 
 
 @pytest.fixture
@@ -31,6 +33,8 @@ def cnxn(main):
 def cursor(cnxn):
     """testdb cursor fixture"""
     cursor = cnxn.cursor(cursor_factory=RealDictCursor)
+    tables = CreateTables.tables
+    DbValidators.create_tables(cnxn, cursor, *tables)
     yield cursor
     cnxn.rollback()
 
