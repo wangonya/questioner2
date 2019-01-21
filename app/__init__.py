@@ -13,7 +13,7 @@ def create_app(default_config):
     app.config.from_object(APP_CONFIG[default_config])
     api_bp = Blueprint('api', __name__)
     api = Api(api_bp)
-    jwt = JWTManager(app)
+    JWTManager(app)
     app.config['JWT_SECRET_KEY'] = 'questioner-jwt-secret'  # os.getenv() value isn't working locally
 
     # register blueprint
