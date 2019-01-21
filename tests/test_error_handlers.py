@@ -41,3 +41,30 @@ def test_db_error_handlers(capsys):
 
     assert str(err.value) == "500 Internal Server Error: " \
                              "An error occurred while creating the tables"
+
+
+def test_auth_validators(dev_cursor):
+    """test auth validators"""
+    # email format
+    with pytest.raises(error_handlers.InvalidEmailFormatError) as err:
+        validators.AuthValidators.check_email_format("bademail.com")
+
+    assert str(err.value) == "400 Bad Request: " \
+                             "Invalid email format"
+
+    # password length
+    with pytest.raises(error_handlers.InvalidPasswordLengthError) as err:
+        validators.AuthValidators.check_password_length("pass")
+
+    assert str(err.value) == "422 Unprocessable Entity: " \
+                             "Password length has to be at least 6 characters"
+
+    # duplicate email
+    with pytest.raises(error_handlers.UserAlreadyExistsError) as err:
+        validators.AuthValidators.check_email_exists("test@gmail.com")
+
+    assert str(err.value) == "409 Conflict: " \
+                             "A user with that email already exists"
+
+    dev_cursor.execute('DELETE FROM users '
+                       'WHERE email = (%s)', ("test@gmail.com",))
