@@ -23,3 +23,9 @@ class UserAlreadyExistsError(HTTPException):
     """handle duplicate user registration"""
     code = 409
     description = "A user with that email already exists"
+
+
+class InvalidPasswordLengthError(HTTPException):
+    """handle duplicate user registration"""
+    code = 422  # the error code here is debatable: https://bit.ly/2Dn5waI
+    description = "Password length has to be at least 6 characters"
