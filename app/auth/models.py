@@ -34,10 +34,11 @@ class AuthModel:
     @classmethod
     def find_by_email(cls, email):
         """find user by email"""
-        cls.cursor.execute('SELECT email '
+        cls.cursor.execute('SELECT * '
                            'FROM users '
                            'WHERE email = (%s)', (email,))
-        return cls.cursor.fetchone()
+        user = cls.cursor.fetchone()
+        return user
 
     @classmethod
     def verify_hash(cls, email, unhashed):
