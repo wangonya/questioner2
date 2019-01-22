@@ -1,33 +1,20 @@
-import os
 import pytest
 
 from app.utils import error_handlers, validators
-from app.db import CreateTables
 from app.auth.models import AuthModel
 
 
-def test_db_error_handlers(capsys):
-    """test db error handler. first pass in correct db parameters to test the try blocks
-    then pass in incorrect details to check that exception is actually raised"""
-    cnxn = validators.DbValidators.connect_to_db(os.getenv("TESTING_DB_URI"))
-    cnxn_parameters = cnxn.get_dsn_parameters()
-    assert cnxn_parameters.get("dbname") == "questioner_test"
-    cursor = cnxn.cursor()
-    assert cursor
-    captured = capsys.readouterr()
-    assert captured.out == "Connection successful\n"
-
-    tables = CreateTables.tables
-    validators.DbValidators.create_tables(cnxn, cursor, *tables)
-    captured = capsys.readouterr()
-    assert captured.out == "Tables created successfully\n"
-
+def test_db_connection_error():
+    """test that an exception is raised if there's an error connecting to the database"""
     with pytest.raises(error_handlers.DatabaseConnectionError) as err:
         validators.DbValidators.connect_to_db("bad-db-uri-to-check-exception-raise")
 
     assert str(err.value) == "500 Internal Server Error: " \
                              "An error occurred while connecting to the database"
 
+
+def test_table_creation_error(cnxn, cursor):
+    """test that an exception is raised if there's an error creating the db tables"""
     sttmt = ""
     with pytest.raises(error_handlers.TableCreationError) as err:
         validators.DbValidators.create_tables(cnxn, cursor, sttmt)
@@ -36,35 +23,46 @@ def test_db_error_handlers(capsys):
                              "An error occurred while creating the tables"
 
 
-def test_auth_validators():
-    """test auth validators"""
+def test_invalid_email_format():
+    """test that an exception is raised if an invalid email format is passed in"""
     with pytest.raises(error_handlers.InvalidEmailFormatError) as err:
         validators.AuthValidators.check_email_format("bademail.com")
 
     assert str(err.value) == "400 Bad Request: " \
                              "Invalid email format"
 
+
+def test_invalid_password():
+    """test that an exception is raised if a short password is passed in"""
     with pytest.raises(error_handlers.InvalidPasswordLengthError) as err:
         validators.AuthValidators.check_password_length("pass")
 
     assert str(err.value) == "400 Bad Request: " \
                              "Password length has to be at least 6 characters"
 
+
+def test_signup_duplicate_user():
+    """test that an exception is raised if an email that already exists is passed in during signup"""
     with pytest.raises(error_handlers.UserAlreadyExistsError) as err:
         validators.AuthValidators.check_email_exists("test@gmail.com")
 
     assert str(err.value) == "409 Conflict: " \
                              "A user with that email already exists"
 
+
+def test_login_email_check():
+    """test that an exception is raised if the email passed in during login is not registered"""
     with pytest.raises(error_handlers.UserLoginError) as err:
-        validators.AuthValidators.confirm_login_email("bademail.com")
+        validators.AuthValidators.confirm_login_email("bademail@gmail.com")
 
     assert str(err.value) == "401 Unauthorized: " \
                              "Invalid login details provided"
 
+
+def test_login_password_check():
+    """test that an exception is raised if an invalid password is passed in"""
     with pytest.raises(error_handlers.UserLoginError) as err:
         assert AuthModel.verify_hash("admin@questioner.com", "badpass")
-        assert AuthModel.verify_hash("bademail.com", "badpass")
 
     assert str(err.value) == "401 Unauthorized: " \
                              "Invalid login details provided"
@@ -76,8 +74,8 @@ def test_auth_validators():
                              "Invalid login details provided"
 
 
-def test_meetups_validators(dev_cursor):
-    """test meetup validators"""
+def test_meetups_post_admin(dev_cursor):
+    """test that an exception is raised if a non-admin user tries to post a meetup"""
     with pytest.raises(error_handlers.AdminProtectedError) as err:
         dev_cursor.execute('SELECT * '
                            'FROM users '
