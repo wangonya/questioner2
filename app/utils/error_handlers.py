@@ -27,5 +27,5 @@ class UserAlreadyExistsError(HTTPException):
 
 class InvalidPasswordLengthError(HTTPException):
     """handle duplicate user registration"""
-    code = 422  # the error code here is debatable: https://bit.ly/2Dn5waI
+    code = 400
     description = "Password length has to be at least 6 characters"
