@@ -32,13 +32,10 @@ class Signup(Resource):
         """do a POST to signup endpoint"""
         data = Signup.parser.parse_args()
 
-        # check that email is in a correct format
         AuthValidators.check_email_format(data["email"])
 
-        # check if email already exists to avoid duplicates
         AuthValidators.check_email_exists(data["email"])
 
-        # check that password has appropriate length
         AuthValidators.check_password_length(data["password"])
 
         user = AuthModel(**data)
