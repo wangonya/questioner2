@@ -3,8 +3,8 @@ import datetime
 from .conftest import post_json
 
 
-def test_sign_up_valid(new_user, cursor, main):
-    """test signup with valid details"""
+def test_sign_up(new_user, cursor, main):
+    """test signup endpoint"""
     insert_query = ('INSERT INTO users '
                     '(firstname, lastname, email, phonenumber, '
                     'password, username) '
@@ -24,8 +24,23 @@ def test_sign_up_valid(new_user, cursor, main):
     assert new_user.username[0] == data["username"] == "test"
     assert isinstance(data["registered"], datetime.date)
 
-    cursor.execute('TRUNCATE TABLE users;')
-
     res = post_json(main, "/api/v2/auth/signup", new_user.__dict__)
     assert res.status_code == 201
     assert b"user registered successfully" in res.data
+
+
+def test_login(cursor, main):
+    """test login endpoint"""
+    test_data = {
+        "email": "admin@questioner.com",
+        "password": "q_admin"
+    }
+    res = post_json(main, "/api/v2/auth/login", test_data)
+    assert res.status_code == 200
+    assert b"user logged in successfully" in res.data
+
+    cursor.execute('TRUNCATE TABLE users;')
+
+
+# def test_verify_hash():
+#     assert AuthModel.verify_hash("admin@questioner.com", "q_admin")
