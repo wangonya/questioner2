@@ -2,7 +2,8 @@ import re
 import psycopg2
 
 from .error_handlers import (DatabaseConnectionError, TableCreationError, InvalidEmailFormatError,
-                             UserAlreadyExistsError, InvalidPasswordLengthError, UserLoginError)
+                             UserAlreadyExistsError, InvalidPasswordLengthError, UserLoginError,
+                             DuplicateDataError, AdminProtectedError)
 
 
 class DbValidators:
@@ -57,3 +58,19 @@ class AuthValidators:
         """check that password is appropriate length"""
         if len(password) < 6:
             raise InvalidPasswordLengthError
+
+
+class MeetupValidators:
+    """meetup methods validators"""
+    @staticmethod
+    def check_duplicate_meetup(title):
+        """check if a meetup with the same title already exists"""
+        from ..meetups.models import MeetupModel
+        if MeetupModel.find_meetup(title):
+            raise DuplicateDataError
+
+    @staticmethod
+    def check_creator_is_admin(creator):
+        """check if the user posting the meetup is an admin"""
+        if not creator["is_admin"]:
+            raise AdminProtectedError
