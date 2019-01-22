@@ -63,7 +63,6 @@ def new_user():
     yield user
 
 
-# helper functions dealing with data
 def post_json(main, url, json_dict):
-    """send a json dict to the specified url """
+    """helper function to send a json dict to the specified url """
     return main.post(url, data=json.dumps(json_dict), content_type='application/json')
