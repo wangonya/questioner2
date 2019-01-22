@@ -19,7 +19,7 @@ class DbValidators:
             raise DatabaseConnectionError
 
     @staticmethod
-    def create_tables(cnxn, cursor, *tables):
+    def create_tables(cursor, *tables):
         """create db tables"""
         try:
             for table in tables:
@@ -39,8 +39,9 @@ class AuthValidators:
 
     @staticmethod
     def check_email_exists(email):
-        """check if email already exists to avoid duplicates"""
-        from ..auth.models import AuthModel  # imported here to circumvent circular import loop
+        """check if email already exists to avoid duplicates.
+        Authmodel imported here instead of at the top to circumvent circular import loop"""
+        from ..auth.models import AuthModel
         if AuthModel.find_by_email(email):
             raise UserAlreadyExistsError
 
