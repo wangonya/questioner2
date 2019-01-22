@@ -2,7 +2,6 @@ from flask_restful import Resource, reqparse
 from flask_jwt_extended import create_access_token
 
 from ..utils.validators import AuthValidators
-from ..utils.error_handlers import UserLoginError
 from ..auth.models import AuthModel
 
 
@@ -37,5 +36,3 @@ class Login(Resource):
             }]}
 
         return response, 200
-        # else:
-        #     raise UserLoginError
