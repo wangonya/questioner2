@@ -1,15 +1,17 @@
 import os
 
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
+from psycopg2.extras import RealDictCursor
 
 from ..utils.validators import DbValidators
+from ..utils.error_handlers import UserLoginError
 
 
 class AuthModel:
     """model for auth tables"""
     cnxn = DbValidators.connect_to_db(os.getenv("DEV_DB_URI"))
     cnxn.autocommit = True
-    cursor = cnxn.cursor()
+    cursor = cnxn.cursor(cursor_factory=RealDictCursor)
 
     def __init__(self, firstname, lastname, email, phonenumber, password):
         self.firstname = firstname
@@ -36,3 +38,18 @@ class AuthModel:
                            'FROM users '
                            'WHERE email = (%s)', (email,))
         return cls.cursor.fetchone()
+
+    @classmethod
+    def verify_hash(cls, email, unhashed):
+        """decode password hash and verify that it matches the passed in password"""
+        try:
+            cls.cursor.execute('SELECT password '
+                               'FROM users '
+                               'WHERE email = (%s)', (email,))
+            hashed = cls.cursor.fetchone()
+            if not check_password_hash(hashed["password"], unhashed):
+                raise UserLoginError
+            else:
+                return check_password_hash(hashed["password"], unhashed)
+        except (AttributeError, TypeError):
+            raise UserLoginError
