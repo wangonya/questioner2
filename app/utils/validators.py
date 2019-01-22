@@ -19,7 +19,7 @@ class DbValidators:
             raise DatabaseConnectionError
 
     @staticmethod
-    def create_tables(cursor, *tables):
+    def create_tables(cnxn, cursor, *tables):
         """create db tables"""
         try:
             for table in tables:
