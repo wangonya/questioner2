@@ -57,10 +57,3 @@ class AuthValidators:
         """check that password is appropriate length"""
         if len(password) < 6:
             raise InvalidPasswordLengthError
-
-    @staticmethod
-    def check_password_is_correct(email, password):
-        """check that the password entered matches the one in db"""
-        from ..auth.models import AuthModel
-        if AuthModel.verify_hash(email, password):
-            raise UserLoginError
