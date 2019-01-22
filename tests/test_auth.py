@@ -40,7 +40,3 @@ def test_login(cursor, main):
     assert b"user logged in successfully" in res.data
 
     cursor.execute('TRUNCATE TABLE users;')
-
-
-# def test_verify_hash():
-#     assert AuthModel.verify_hash("admin@questioner.com", "q_admin")
