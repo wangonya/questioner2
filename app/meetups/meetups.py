@@ -51,7 +51,7 @@ class PostMeetups(Resource):
         meetup.save_meetup_to_db()
 
         response = {
-            "status": 200,
+            "status": 201,
             "message": "meetup created successfully",
             "data": [{
                 "title": title,
