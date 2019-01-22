@@ -2,7 +2,7 @@ import re
 import psycopg2
 
 from .error_handlers import (DatabaseConnectionError, TableCreationError, InvalidEmailFormatError,
-                             UserAlreadyExistsError, InvalidPasswordLengthError)
+                             UserAlreadyExistsError, InvalidPasswordLengthError, UserLoginError)
 
 
 class DbValidators:
@@ -44,6 +44,13 @@ class AuthValidators:
         from ..auth.models import AuthModel
         if AuthModel.find_by_email(email):
             raise UserAlreadyExistsError
+
+    @staticmethod
+    def confirm_login_email(email):
+        """check if email already exists for login validation"""
+        from ..auth.models import AuthModel
+        if not AuthModel.find_by_email(email):
+            raise UserLoginError
 
     @staticmethod
     def check_password_length(password):

@@ -29,3 +29,9 @@ class InvalidPasswordLengthError(HTTPException):
     """handle duplicate user registration"""
     code = 400
     description = "Password length has to be at least 6 characters"
+
+
+class UserLoginError(HTTPException):
+    """handle invalid login details"""
+    code = 401
+    description = "Invalid login details provided"

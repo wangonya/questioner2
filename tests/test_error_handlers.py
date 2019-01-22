@@ -3,6 +3,7 @@ import pytest
 
 from app.utils import error_handlers, validators
 from app.db import CreateTables
+from app.auth.models import AuthModel
 
 
 def test_db_error_handlers(capsys):
@@ -35,7 +36,7 @@ def test_db_error_handlers(capsys):
                              "An error occurred while creating the tables"
 
 
-def test_auth_validators(dev_cursor):
+def test_auth_validators(dev_cursor, main):
     """test auth validators"""
     with pytest.raises(error_handlers.InvalidEmailFormatError) as err:
         validators.AuthValidators.check_email_format("bademail.com")
@@ -54,6 +55,25 @@ def test_auth_validators(dev_cursor):
 
     assert str(err.value) == "409 Conflict: " \
                              "A user with that email already exists"
+
+    with pytest.raises(error_handlers.UserLoginError) as err:
+        validators.AuthValidators.confirm_login_email("bademail.com")
+
+    assert str(err.value) == "401 Unauthorized: " \
+                             "Invalid login details provided"
+
+    with pytest.raises(error_handlers.UserLoginError) as err:
+        assert AuthModel.verify_hash("admin@questioner.com", "badpass")
+        assert AuthModel.verify_hash("bademail.com", "badpass")
+
+    assert str(err.value) == "401 Unauthorized: " \
+                             "Invalid login details provided"
+
+    with pytest.raises(error_handlers.UserLoginError) as err:
+        assert AuthModel.verify_hash("bademail.com", "badpass")
+
+    assert str(err.value) == "401 Unauthorized: " \
+                             "Invalid login details provided"
 
     dev_cursor.execute('DELETE FROM users '
                        'WHERE email = (%s)', ("test@gmail.com",))

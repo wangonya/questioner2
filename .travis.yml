@@ -4,6 +4,9 @@ python:
 install:
   - pip3 install -r requirements.txt
 
+addons:
+  postgresql: "9.5"
+
 services:
   - postgresql
 

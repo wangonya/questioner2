@@ -5,6 +5,7 @@ from flask_jwt_extended import JWTManager
 from config import APP_CONFIG
 from .db import CreateTables
 from .auth.signup import Signup
+from .auth.login import Login
 
 
 def create_app(default_config):
@@ -27,5 +28,6 @@ def create_app(default_config):
 
     api.add_resource(HelloWorld, '/')
     api.add_resource(Signup, '/auth/signup')
+    api.add_resource(Login, '/auth/login')
 
     return app
