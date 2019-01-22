@@ -36,7 +36,7 @@ def test_db_error_handlers(capsys):
                              "An error occurred while creating the tables"
 
 
-def test_auth_validators(dev_cursor, main):
+def test_auth_validators():
     """test auth validators"""
     with pytest.raises(error_handlers.InvalidEmailFormatError) as err:
         validators.AuthValidators.check_email_format("bademail.com")
@@ -74,6 +74,19 @@ def test_auth_validators(dev_cursor, main):
 
     assert str(err.value) == "401 Unauthorized: " \
                              "Invalid login details provided"
+
+
+def test_meetups_validators(dev_cursor):
+    """test meetup validators"""
+    with pytest.raises(error_handlers.AdminProtectedError) as err:
+        dev_cursor.execute('SELECT * '
+                           'FROM users '
+                           'WHERE email = (%s)', ("test@gmail.com",))
+        creator = dev_cursor.fetchone()
+        assert validators.MeetupValidators.check_creator_is_admin(creator)
+
+    assert str(err.value) == "401 Unauthorized: " \
+                             "Only an admin user can access this endpoint"
 
     dev_cursor.execute('DELETE FROM users '
                        'WHERE email = (%s)', ("test@gmail.com",))
