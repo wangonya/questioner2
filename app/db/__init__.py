@@ -1,4 +1,5 @@
 import os
+from werkzeug.security import generate_password_hash
 
 from ..utils.validators import DbValidators
 
@@ -59,3 +60,23 @@ class CreateTables:
 
     tables = [users_table, meetups_table, questions_table, answers_table, votes_table, rsvps_table]
     DbValidators.create_tables(cnxn, cursor, *tables)
+
+    default_admin = {
+        "firstname": "fname",
+        "lastname": "lname",
+        "email": "admin@questioner.com",
+        "phonenumber": "23432432",
+        "password": "q_admin",
+        "username": "admin",
+        "is_admin": True
+    }
+
+    create_admin = ('INSERT INTO users '
+                    '(firstname, lastname, email, phonenumber, '
+                    'password, username, is_admin) '
+                    'VALUES (%s, %s, %s, %s, %s, %s, %s)'
+                    'ON CONFLICT DO NOTHING;')
+    cursor.execute(create_admin,
+                   (default_admin["firstname"], default_admin["lastname"], default_admin["email"],
+                    default_admin["phonenumber"], generate_password_hash(default_admin["password"]),
+                    default_admin["username"], default_admin["is_admin"]))
