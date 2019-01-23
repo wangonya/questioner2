@@ -38,6 +38,24 @@ def cursor(cnxn):
     cursor = cnxn.cursor(cursor_factory=RealDictCursor)
     tables = CreateTables.tables
     DbValidators.create_tables(cnxn, cursor, *tables)
+    default_admin = {
+        "firstname": "fname",
+        "lastname": "lname",
+        "email": "admin@questioner.com",
+        "phonenumber": "23432432",
+        "password": "q_admin",
+        "username": "admin",
+        "is_admin": True
+    }
+    create_admin = ('INSERT INTO users '
+                    '(firstname, lastname, email, phonenumber, '
+                    'password, username, is_admin) '
+                    'VALUES (%s, %s, %s, %s, %s, %s, %s)'
+                    'ON CONFLICT DO NOTHING;')
+    cursor.execute(create_admin,
+                   (default_admin["firstname"], default_admin["lastname"], default_admin["email"],
+                    default_admin["phonenumber"], default_admin["password"],
+                    default_admin["username"], default_admin["is_admin"]))
     yield cursor
     cnxn.rollback()
 

@@ -13,7 +13,7 @@ def test_sign_up(new_user, cursor, main):
                    (new_user.firstname, new_user.lastname, new_user.email,
                     new_user.phonenumber, new_user.password, new_user.username))
 
-    cursor.execute('SELECT * FROM users;')
+    cursor.execute('SELECT * FROM users WHERE email = (%s)', (new_user.email,))
     data = cursor.fetchone()
     assert isinstance(data["id"], int)
     assert new_user.firstname == data["firstname"] == "fname"
@@ -39,4 +39,5 @@ def test_login(cursor, main):
     assert res.status_code == 200
     assert b"user logged in successfully" in res.data
 
-    cursor.execute('TRUNCATE TABLE users;')
+    cursor.execute('DELETE FROM users '
+                   'WHERE email = (%s)', ("test@gmail.com",))
