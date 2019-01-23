@@ -32,7 +32,7 @@ def test_post_meetup(new_meetup, cursor, main):
     cursor.execute('TRUNCATE TABLE meetups;')
 
 
-def test_duplicate_meetup(dev_cursor):
+def test_duplicate_meetup():
     """check duplicate meetup"""
     with pytest.raises(error_handlers.DuplicateDataError) as err:
         assert validators.MeetupValidators.check_duplicate_meetup("sample meetup")
@@ -55,9 +55,6 @@ def test_specific_meetup(main, dev_cursor):
     meetup = dev_cursor.fetchone()
     res = main.get('/api/v2/meetups/{}'.format(meetup["id"]))
     assert res.status_code == 200
-
-    dev_cursor.execute('DELETE FROM meetups '
-                       'WHERE title = (%s)', ("sample meetup",))
 
 
 def test_specific_meetup_not_found(main):
