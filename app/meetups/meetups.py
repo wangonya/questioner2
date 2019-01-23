@@ -1,3 +1,5 @@
+import json
+
 from flask_restful import Resource, reqparse
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
@@ -25,11 +27,19 @@ class Meetups(Resource):
                         type=str)
     parser.add_argument("tags", action="append")
 
+    @staticmethod
+    def get():
+        """do a GET to upcoming meetups endpoint"""
+        meetups = MeetupModel.get_upcoming_meetups()
+        return {"status": 200,
+                "data": json.dumps(meetups, default=str)}, 200
+
 
 class PostMeetups(Resource):
     """post new meetup endpoint"""
+    @staticmethod
     @jwt_required
-    def post(self):
+    def post():
         """do a POST to the meetups endpoint"""
         data = Meetups.parser.parse_args()
 
