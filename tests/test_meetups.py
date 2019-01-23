@@ -29,8 +29,6 @@ def test_post_meetup(new_meetup, cursor, main):
     assert res.status_code == 201
     assert b"meetup created successfully" in res.data
 
-    cursor.execute('TRUNCATE TABLE meetups;')
-
 
 def test_duplicate_meetup():
     """check duplicate meetup"""
