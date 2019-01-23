@@ -11,6 +11,7 @@ from app.auth.models import AuthModel
 from app.meetups.models import MeetupModel
 from app.db import CreateTables
 from app.utils.validators import DbValidators
+from app.questions.models import PostQuestionsModel
 
 
 @pytest.fixture
@@ -73,6 +74,13 @@ def new_meetup(dev_cursor):
                        'WHERE is_admin = (%s)', (True,))
     creator = dev_cursor.fetchone()
     meetup = MeetupModel("sample meetup", creator["id"], "test location", "2019-01-22", "test tag", "test image")
+    yield meetup
+
+
+@pytest.fixture
+def new_question():
+    """reuse this in question test to test post new question"""
+    meetup = PostQuestionsModel("test title", 1, "test question body", 1)
     yield meetup
 
 
