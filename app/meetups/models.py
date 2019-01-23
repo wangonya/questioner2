@@ -27,8 +27,16 @@ class MeetupModel:
                         'happening_on, tags, image) '
                         'VALUES (%s, %s, %s, %s, %s, %s);')
         MeetupModel.cursor.execute(insert_query,
-                                 (self.title, self.creator, self.location,
-                                  self.happening_on, self.tags, self.image))
+                                   (self.title, self.creator, self.location,
+                                    self.happening_on, self.tags, self.image))
+
+    @classmethod
+    def get_upcoming_meetups(cls):
+        """get all upcoming meetups"""
+        cls.cursor.execute('SELECT * '
+                           'FROM meetups')
+        meetups = cls.cursor.fetchall()
+        return meetups
 
     @classmethod
     def find_meetup(cls, title):
