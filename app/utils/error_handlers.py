@@ -35,3 +35,15 @@ class UserLoginError(HTTPException):
     """handle invalid login details"""
     code = 401
     description = "Invalid login details provided"
+
+
+class DuplicateDataError(HTTPException):
+    """handle duplicate data entries"""
+    code = 409
+    description = "The entered data already exists"
+
+
+class AdminProtectedError(HTTPException):
+    """handle admin protected routes"""
+    code = 401
+    description = "Only an admin user can access this endpoint"

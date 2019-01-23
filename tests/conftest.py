@@ -4,9 +4,11 @@ import pytest
 import psycopg2
 
 from psycopg2.extras import RealDictCursor
+from flask_jwt_extended import create_access_token
 
 import app
 from app.auth.models import AuthModel
+from app.meetups.models import MeetupModel
 from app.db import CreateTables
 from app.utils.validators import DbValidators
 
@@ -63,6 +65,19 @@ def new_user():
     yield user
 
 
+@pytest.fixture
+def new_meetup(dev_cursor):
+    """reuse this in meetup test to test MeetupModel post new meetup"""
+    dev_cursor.execute('SELECT * '
+                       'FROM users '
+                       'WHERE is_admin = (%s)', (True,))
+    creator = dev_cursor.fetchone()
+    meetup = MeetupModel("sample meetup", creator["id"], "test location", "2019-01-22", "test tag", "test image")
+    yield meetup
+
+
 def post_json(main, url, json_dict):
     """helper function to send a json dict to the specified url """
-    return main.post(url, data=json.dumps(json_dict), content_type='application/json')
+    access_token = create_access_token('admin@questioner.com')
+    headers = {'Authorization': 'Bearer {}'.format(access_token)}
+    return main.post(url, data=json.dumps(json_dict), content_type='application/json', headers=headers)
