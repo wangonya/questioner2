@@ -81,3 +81,13 @@ class MeetupValidators:
         from ..meetups.models import MeetupModel
         if not MeetupModel.get_specific_meetup(m_id):
             raise NoDataError
+
+
+class QuestionValidators:
+    """question methods validators"""
+    @staticmethod
+    def check_duplicate_question(title):
+        """check if a question with the same title already exists"""
+        from ..questions.models import PostQuestionsModel
+        if PostQuestionsModel.find_question(title):
+            raise DuplicateDataError
