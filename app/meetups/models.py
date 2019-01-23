@@ -39,6 +39,15 @@ class MeetupModel:
         return meetups
 
     @classmethod
+    def get_specific_meetup(cls, m_id):
+        """get all upcoming meetups"""
+        cls.cursor.execute('SELECT * '
+                           'FROM meetups '
+                           'WHERE id = (%s)', (m_id,))
+        meetups = cls.cursor.fetchall()
+        return meetups
+
+    @classmethod
     def find_meetup(cls, title):
         """check if a meetup with the same title already exists"""
         cls.cursor.execute('SELECT * '
