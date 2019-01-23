@@ -6,7 +6,7 @@ from config import APP_CONFIG
 from .db import CreateTables
 from .auth.signup import Signup
 from .auth.login import Login
-from .meetups.meetups import PostMeetups, Meetups
+from .meetups.meetups import PostMeetups, Meetups, GetSpecificMeetup
 
 
 def create_app(default_config):
@@ -32,5 +32,6 @@ def create_app(default_config):
     api.add_resource(Login, '/auth/login')
     api.add_resource(PostMeetups, '/meetups')
     api.add_resource(Meetups, '/meetups/upcoming')
+    api.add_resource(GetSpecificMeetup, '/meetups/<int:m_id>')
 
     return app

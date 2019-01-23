@@ -3,7 +3,7 @@ import psycopg2
 
 from .error_handlers import (DatabaseConnectionError, TableCreationError, InvalidEmailFormatError,
                              UserAlreadyExistsError, InvalidPasswordLengthError, UserLoginError,
-                             DuplicateDataError, AdminProtectedError)
+                             DuplicateDataError, AdminProtectedError, NoDataError)
 
 
 class DbValidators:
@@ -74,3 +74,10 @@ class MeetupValidators:
         """check if the user posting the meetup is an admin"""
         if not creator["is_admin"]:
             raise AdminProtectedError
+
+    @staticmethod
+    def check_meetup_exists(m_id):
+        """check if the requested meetup exists"""
+        from ..meetups.models import MeetupModel
+        if not MeetupModel.get_specific_meetup(m_id):
+            raise NoDataError

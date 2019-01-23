@@ -47,3 +47,9 @@ class AdminProtectedError(HTTPException):
     """handle admin protected routes"""
     code = 401
     description = "Only an admin user can access this endpoint"
+
+
+class NoDataError(HTTPException):
+    """handle missing data requested"""
+    code = 404
+    description = "The data you requested for does not exists"

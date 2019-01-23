@@ -71,3 +71,19 @@ class PostMeetups(Resource):
             }]}
 
         return response, 201
+
+
+class GetSpecificMeetup(Resource):
+    @staticmethod
+    def get(m_id):
+        """send a GET to the specific meetup endpoint"""
+        MeetupValidators.check_meetup_exists(m_id)
+
+        meetup = MeetupModel.get_specific_meetup(m_id)
+
+        response = {
+            "status": 200,
+            "data": [json.dumps(meetup, default=str)]
+                }
+
+        return response, 200

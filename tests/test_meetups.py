@@ -40,5 +40,27 @@ def test_duplicate_meetup(dev_cursor):
     assert str(err.value) == "409 Conflict: " \
                              "The entered data already exists"
 
+
+def test_get_upcoming_meetups(main):
+    """test view upcoming meetups"""
+    res = main.get('/api/v2/meetups/upcoming')
+    assert res.status_code == 200
+
+
+def test_specific_meetup(main, dev_cursor):
+    """test view specific meetup"""
+    dev_cursor.execute('SELECT * '
+                       'FROM meetups '
+                       'WHERE title = (%s)', ("sample meetup",))
+    meetup = dev_cursor.fetchone()
+    res = main.get('/api/v2/meetups/{}'.format(meetup["id"]))
+    assert res.status_code == 200
+
     dev_cursor.execute('DELETE FROM meetups '
                        'WHERE title = (%s)', ("sample meetup",))
+
+
+def test_specific_meetup_not_found(main):
+    """test that a 404 is returned if the meetup does not exist"""
+    res = main.get('/api/v2/meetups/7688')
+    assert res.status_code == 404
