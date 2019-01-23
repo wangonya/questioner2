@@ -3,7 +3,6 @@ import pytest
 
 from .conftest import post_json
 from app.utils import error_handlers, validators
-from app.meetups.models import MeetupModel
 
 
 def test_post_meetup(new_meetup, cursor, main):
