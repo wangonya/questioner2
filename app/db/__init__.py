@@ -23,7 +23,7 @@ class CreateTables:
     meetups_table = ('CREATE TABLE IF NOT EXISTS meetups'
                      '(id SERIAL PRIMARY KEY,'
                      'title VARCHAR(50) NOT NULL,'
-                     'creator INT NOT NULL,'
+                     'creator INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,'
                      'location VARCHAR(150) NOT NULL,'
                      'happening_on DATE NOT NULL,'
                      'created_on DATE NOT NULL DEFAULT CURRENT_DATE,'
@@ -33,29 +33,30 @@ class CreateTables:
     questions_table = ('CREATE TABLE IF NOT EXISTS questions'
                        '(id SERIAL PRIMARY KEY,'
                        'title VARCHAR(50) NOT NULL,'
-                       'creator INT NOT NULL,'
+                       'creator INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,'
                        'body VARCHAR NOT NULL,'
-                       'meetup INT NOT NULL,'
+                       'meetup INT NOT NULL REFERENCES meetups(id) ON DELETE CASCADE,'
                        'created_on DATE NOT NULL DEFAULT CURRENT_DATE,'
                        'votes INT NOT NULL );')
 
     answers_table = ('CREATE TABLE IF NOT EXISTS answers'
                      '(id SERIAL PRIMARY KEY,'
-                     'creator INT NOT NULL,'
+                     'creator INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,'
                      'body VARCHAR NOT NULL,'
-                     'meetup INT NOT NULL,'
-                     'question INT NOT NULL );')
+                     'meetup INT NOT NULL REFERENCES meetups(id) ON DELETE CASCADE,'
+                     'question INT NOT NULL REFERENCES questions(id) ON DELETE CASCADE);')
 
     rsvps_table = ('CREATE TABLE IF NOT EXISTS rsvps'
-                   '(id SERIAL PRIMARY KEY,'
+                   '(id SERIAL NOT NULL,'
                    'status VARCHAR(5) NOT NULL,'
-                   'meetup INT NOT NULL,'
-                   'creator INT NOT NULL );')
+                   'meetup INT NOT NULL REFERENCES meetups(id) ON DELETE CASCADE,'
+                   'creator INT NOT NULL REFERENCES users(id) ON DELETE CASCADE, '
+                   'PRIMARY KEY (creator, meetup));')
 
     votes_table = ('CREATE TABLE IF NOT EXISTS votes'
                    '(id SERIAL PRIMARY KEY,'
-                   'creator INT NOT NULL,'
-                   'question INT NOT NULL,'
+                   'creator INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,'
+                   'question INT NOT NULL REFERENCES questions(id) ON DELETE CASCADE,'
                    'count INT NOT NULL );')
 
     tables = [users_table, meetups_table, questions_table, answers_table, votes_table, rsvps_table]
