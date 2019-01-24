@@ -56,6 +56,12 @@ class MeetupModel:
         meetup = cls.cursor.fetchone()
         return meetup
 
+    @classmethod
+    def delete_meetup(cls, m_id):
+        """delete meetup"""
+        cls.cursor.execute('DELETE FROM meetups '
+                           'WHERE id = (%s)', (m_id,))
+
 
 class RsvpsModel:
     """model to handle rsvp data"""

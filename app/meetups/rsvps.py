@@ -1,6 +1,6 @@
 from flask_restful import Resource, reqparse
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from ..meetups.models import MeetupModel, RsvpsModel
+from ..meetups.models import RsvpsModel
 from ..auth.models import AuthModel
 from ..utils.validators import RsvpValidators, MeetupValidators
 
