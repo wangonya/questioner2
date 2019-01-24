@@ -3,7 +3,7 @@ import psycopg2
 
 from .error_handlers import (DatabaseConnectionError, TableCreationError, InvalidEmailFormatError,
                              UserAlreadyExistsError, InvalidPasswordLengthError, UserLoginError,
-                             DuplicateDataError, AdminProtectedError, NoDataError)
+                             DuplicateDataError, AdminProtectedError, NoDataError, InvalidRsvpStatusError)
 
 
 class DbValidators:
@@ -98,3 +98,12 @@ class QuestionValidators:
         from ..questions.models import VoteModel
         if not VoteModel.get_specific_question(q_id):
             raise NoDataError
+
+
+class RsvpValidators:
+    """rsvp validators"""
+    @staticmethod
+    def check_proper_rsvp(status):
+        """rsvp status should only be 'yes', 'no', or 'maybe'"""
+        if status not in ("yes", "no", "maybe"):
+            raise InvalidRsvpStatusError
