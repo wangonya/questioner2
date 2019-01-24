@@ -11,7 +11,7 @@ from app.auth.models import AuthModel
 from app.meetups.models import MeetupModel
 from app.db import CreateTables
 from app.utils.validators import DbValidators
-from app.questions.models import PostQuestionsModel
+from app.questions.models import PostQuestionsModel, VoteModel
 
 
 @pytest.fixture
@@ -96,14 +96,36 @@ def new_meetup(dev_cursor):
 
 
 @pytest.fixture
-def new_question():
+def new_question(cursor):
     """reuse this in question test to test post new question"""
-    meetup = PostQuestionsModel("test title", 1, "test question body", 1)
-    yield meetup
+    cursor.execute('SELECT * '
+                   'FROM meetups '
+                   'WHERE title = (%s)', ("sample meetup",))
+    meetup = cursor.fetchone()
+    question = PostQuestionsModel("test title", 1, "test question body", meetup["id"])
+    yield question
+
+
+@pytest.fixture
+def new_vote(cursor):
+    """reuse this in vote test to test post new vote"""
+    cursor.execute('SELECT * '
+                   'FROM questions '
+                   'WHERE title = (%s)', ("test title",))
+    question = cursor.fetchone()
+    vote = VoteModel(1, question["id"], 1)
+    yield vote
 
 
 def post_json(main, url, json_dict):
-    """helper function to send a json dict to the specified url """
+    """helper function to post a json dict to the specified url """
     access_token = create_access_token('admin@questioner.com')
     headers = {'Authorization': 'Bearer {}'.format(access_token)}
     return main.post(url, data=json.dumps(json_dict), content_type='application/json', headers=headers)
+
+
+def patch_json(main, url, json_dict):
+    """helper function to patch a json dict to the specified url """
+    access_token = create_access_token('admin@questioner.com')
+    headers = {'Authorization': 'Bearer {}'.format(access_token)}
+    return main.patch(url, data=json.dumps(json_dict), content_type='application/json', headers=headers)
