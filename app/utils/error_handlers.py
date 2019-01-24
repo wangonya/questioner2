@@ -52,4 +52,4 @@ class AdminProtectedError(HTTPException):
 class NoDataError(HTTPException):
     """handle missing data requested"""
     code = 404
-    description = "The data you requested for does not exists"
+    description = "The data you requested for does not exist"
