@@ -3,7 +3,8 @@ import psycopg2
 
 from .error_handlers import (DatabaseConnectionError, TableCreationError, InvalidEmailFormatError,
                              UserAlreadyExistsError, InvalidPasswordLengthError, UserLoginError,
-                             DuplicateDataError, AdminProtectedError, NoDataError, InvalidRsvpStatusError)
+                             DuplicateDataError, AdminProtectedError, NoDataError, InvalidRsvpStatusError,
+                             MeetupIdDoesNotExist, QuestionIdDoesNotExist)
 
 
 class DbValidators:
@@ -80,7 +81,7 @@ class MeetupValidators:
         """check if the requested meetup exists"""
         from ..meetups.models import MeetupModel
         if not MeetupModel.get_specific_meetup(m_id):
-            raise NoDataError
+            raise MeetupIdDoesNotExist
 
 
 class QuestionValidators:
@@ -97,7 +98,7 @@ class QuestionValidators:
         """check if the requested question exists"""
         from ..questions.models import VoteModel
         if not VoteModel.get_specific_question(q_id):
-            raise NoDataError
+            raise QuestionIdDoesNotExist
 
 
 class RsvpValidators:
