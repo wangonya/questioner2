@@ -32,11 +32,8 @@ def test_post_meetup(new_meetup, cursor, main):
 
 def test_duplicate_meetup():
     """check duplicate meetup"""
-    with pytest.raises(error_handlers.DuplicateDataError) as err:
+    with pytest.raises(error_handlers.DuplicateDataError):
         assert validators.MeetupValidators.check_duplicate_meetup("sample meetup")
-
-    assert str(err.value) == "409 Conflict: " \
-                             "The entered data already exists"
 
 
 def test_get_upcoming_meetups(main):
