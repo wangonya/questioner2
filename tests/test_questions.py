@@ -33,7 +33,7 @@ def test_post_question(main, cursor, new_question, dev_cursor):
     assert b"question submitted successfully" in res.data
 
 
-def test_duplicate_question(dev_cursor):
+def test_duplicate_question():
     """test that an exception is raised if duplicate data is passed in"""
     with pytest.raises(error_handlers.DuplicateDataError) as err:
         validators.QuestionValidators.check_duplicate_question("test title")
@@ -41,8 +41,11 @@ def test_duplicate_question(dev_cursor):
     assert str(err.value) == "409 Conflict: " \
                              "The entered data already exists"
 
-    dev_cursor.execute('DELETE FROM questions '
-                       'WHERE title = (%s)', ("test title",))
 
-    dev_cursor.execute('DELETE FROM meetups '
-                       'WHERE title = (%s)', ("sample meetup",))
+def test_question_exists():
+    """test that an exception is raised if the question being searched for doesnt exist"""
+    with pytest.raises(error_handlers.NoDataError) as err:
+        validators.QuestionValidators.check_question_exists(8979)
+
+    assert str(err.value) == "404 Not Found: " \
+                             "The data you requested for does not exist"
