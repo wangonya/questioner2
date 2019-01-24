@@ -8,7 +8,7 @@ from flask_jwt_extended import create_access_token
 
 import app
 from app.auth.models import AuthModel
-from app.meetups.models import MeetupModel
+from app.meetups.models import MeetupModel, RsvpsModel
 from app.db import CreateTables
 from app.utils.validators import DbValidators
 from app.questions.models import PostQuestionsModel, VoteModel, AnswerQuestionsModel
@@ -127,6 +127,17 @@ def new_comment(cursor):
     comment = AnswerQuestionsModel("test comment", question["creator"],
                                    question["meetup"], question["id"])
     yield comment
+
+
+@pytest.fixture
+def new_rsvp(cursor):
+    """reuse this in rsvp test to test post new rsvp"""
+    cursor.execute('SELECT * '
+                   'FROM meetups '
+                   'WHERE title = (%s)', ("sample meetup",))
+    meetup = cursor.fetchone()
+    rsvp = RsvpsModel("yes", 1, meetup["id"])
+    yield rsvp
 
 
 def post_json(main, url, json_dict):
