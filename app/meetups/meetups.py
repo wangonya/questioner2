@@ -6,6 +6,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from ..meetups.models import MeetupModel
 from ..auth.models import AuthModel
 from ..utils.validators import MeetupValidators
+from ..utils.error_handlers import NoDataError
 
 
 class Meetups(Resource):
@@ -31,12 +32,18 @@ class Meetups(Resource):
     def get():
         """do a GET to upcoming meetups endpoint"""
         meetups = MeetupModel.get_upcoming_meetups()
+        meetups = json.dumps(meetups, default=str)
+
+        if len(json.loads(meetups)) < 1:
+            raise NoDataError
+
         return {"status": 200,
-                "data": json.dumps(meetups, default=str)}, 200
+                "data": json.loads(meetups)}, 200
 
 
 class PostMeetups(Resource):
     """post new meetup endpoint"""
+
     @staticmethod
     @jwt_required
     def post():
@@ -80,10 +87,11 @@ class GetSpecificMeetup(Resource):
         MeetupValidators.check_meetup_exists(m_id)
 
         meetup = MeetupModel.get_specific_meetup(m_id)
+        meetup = json.dumps(meetup, default=str)
 
         response = {
             "status": 200,
-            "data": [json.dumps(meetup, default=str)]
-                }
+            "data": json.loads(meetup)
+        }
 
         return response, 200
