@@ -35,20 +35,14 @@ def test_post_question(main, cursor, new_question, dev_cursor):
 
 def test_duplicate_question():
     """test that an exception is raised if duplicate data is passed in"""
-    with pytest.raises(error_handlers.DuplicateDataError) as err:
+    with pytest.raises(error_handlers.DuplicateDataError):
         validators.QuestionValidators.check_duplicate_question("test title")
-
-    assert str(err.value) == "409 Conflict: " \
-                             "The entered data already exists"
 
 
 def test_question_exists():
     """test that an exception is raised if the question being searched for doesnt exist"""
-    with pytest.raises(error_handlers.NoDataError) as err:
+    with pytest.raises(error_handlers.QuestionIdDoesNotExist):
         validators.QuestionValidators.check_question_exists(8979)
-
-    assert str(err.value) == "404 Not Found: " \
-                             "The data you requested for does not exist"
 
 
 def test_post_comment(new_comment, cursor, main, dev_cursor):

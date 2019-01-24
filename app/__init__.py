@@ -12,6 +12,7 @@ from .questions.vote import Upvote, Downvote
 from .meetups.rsvps import Rsvp
 from .questions.comment import Comment
 from .meetups.delete import DeleteMeetup
+from .utils.error_handlers import errors
 
 
 def create_app(default_config):
@@ -19,7 +20,7 @@ def create_app(default_config):
     app = Flask(__name__)
     app.config.from_object(APP_CONFIG[default_config])
     api_bp = Blueprint('api', __name__)
-    api = Api(api_bp)
+    api = Api(api_bp, errors=errors)
     JWTManager(app)
     app.config['JWT_SECRET_KEY'] = 'questioner-jwt-secret'
 

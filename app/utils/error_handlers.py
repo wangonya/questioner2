@@ -3,66 +3,109 @@ from werkzeug.exceptions import HTTPException
 
 class DatabaseConnectionError(HTTPException):
     """handle database connection error"""
-    code = 500
-    description = "An error occurred while connecting to the database"
+    status = 500
 
 
 class TableCreationError(HTTPException):
     """handle table creation error"""
-    code = 500
-    description = "An error occurred while creating the tables"
 
 
 class InvalidEmailFormatError(HTTPException):
     """handle invalid email format"""
-    code = 400
-    description = "Invalid email format"
 
 
 class UserAlreadyExistsError(HTTPException):
     """handle duplicate user registration"""
-    code = 409
-    description = "A user with that email already exists"
 
 
 class InvalidPasswordLengthError(HTTPException):
     """handle duplicate user registration"""
-    code = 400
-    description = "Password length has to be at least 6 characters"
 
 
 class UserLoginError(HTTPException):
     """handle invalid login details"""
-    code = 401
-    description = "Invalid login details provided"
 
 
 class DuplicateDataError(HTTPException):
     """handle duplicate data entries"""
-    code = 409
-    description = "The entered data already exists"
 
 
 class AdminProtectedError(HTTPException):
     """handle admin protected routes"""
-    code = 401
-    description = "Only an admin user can access this endpoint"
 
 
 class DeleteProtectedError(HTTPException):
     """handle meetup deletion to make sure only the admin that created the
     meetup can delete it"""
-    code = 401
-    description = "Only the admin that created this endpoint can delete it"
 
 
 class NoDataError(HTTPException):
     """handle missing data requested"""
-    code = 404
-    description = "The data you requested for does not exist"
 
 
 class InvalidRsvpStatusError(HTTPException):
     """handle invalid rsvp status"""
-    code = 400
-    description = "Rsvp status can only be 'yes', 'no' or 'maybe'"
+
+
+class MeetupIdDoesNotExist(HTTPException):
+    """handle missing meetup"""
+
+
+class QuestionIdDoesNotExist(HTTPException):
+    """handle missing question"""
+
+
+errors = {
+    "UserAlreadyExistsError": {
+        "message": "A user with that email already exists",
+        "status": 409,
+    },
+    "InvalidEmailFormatError": {
+        "message": "Invalid email format",
+        "status": 400,
+    },
+    "InvalidPasswordLengthError": {
+        "message": "Password length has to be at least 6 characters",
+        "status": 400,
+    },
+    "UserLoginError": {
+        "message": "Incorrect login details provided",
+        "status": 401,
+    },
+    "NoDataError": {
+        "message": "The data you requested for was not found",
+        "status": 404,
+    },
+    "AdminProtectedError": {
+        "message": "Only an admin user can access this endpoint",
+        "status": 401,
+    },
+    "DuplicateDataError": {
+        "message": "The data provided already exists in the resource",
+        "status": 409,
+    },
+    "InvalidRsvpStatusError": {
+        "message": "Rsvp status can only be 'yes', 'no' or 'maybe'",
+        "status": 400,
+    },
+    "DatabaseConnectionError": {
+        "message": "An error occurred while connecting to the database",
+        "status": 500,
+    },
+    "TableCreationError": {
+        "message": "An error occurred while creating the tables",
+        "status": 500,
+    },
+    "DeleteProtectedError": {
+        "message": "Only the admin that created this endpoint can delete it",
+        "status": 401,
+    },
+    "MeetupIdDoesNotExist": {
+        "message": "No meetup matching the id passed was found",
+        "status": 404,
+    },
+    "QuestionIdDoesNotExist": {
+        "message": "No question matching the id passed was found",
+        "status": 404,
+    }
+}
