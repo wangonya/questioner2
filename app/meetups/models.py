@@ -55,3 +55,39 @@ class MeetupModel:
                            'WHERE title = (%s)', (title,))
         meetup = cls.cursor.fetchone()
         return meetup
+
+
+class RsvpsModel:
+    """model to handle rsvp data"""
+
+    def __init__(self, status, uid, m_id):
+        self.status = status
+        self.uid = uid
+        self.m_id = m_id
+
+    def save_rsvp_to_db(self):
+        """save entered rsvp data to db"""
+        insert_query = ('INSERT INTO rsvps '
+                        '(status, creator, meetup) '
+                        'VALUES (%s, %s, %s);')
+        MeetupModel.cursor.execute(insert_query,
+                                   (self.status, self.uid["id"], self.m_id))
+
+    @classmethod
+    def check_duplicate_rsvp(cls, user, m_id):
+        """check if user has already rsvp'd
+        if they have, updte the record"""
+        MeetupModel.cursor.execute('SELECT * '
+                                   'FROM rsvps '
+                                   'WHERE meetup = {} '
+                                   'AND creator = {}'.format(m_id, user["id"]))
+        rsvp = MeetupModel.cursor.fetchone()
+        return rsvp
+
+    @staticmethod
+    def update_rsvp(status, user, meetup):
+        """update rsvp"""
+        delete_query = ('UPDATE rsvps SET status = {} '
+                        'WHERE creator = {} '
+                        'AND meetup = {}'.format(status, user["id"], meetup))
+        MeetupModel.cursor.execute(delete_query)
