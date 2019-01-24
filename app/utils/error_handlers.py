@@ -49,6 +49,13 @@ class AdminProtectedError(HTTPException):
     description = "Only an admin user can access this endpoint"
 
 
+class DeleteProtectedError(HTTPException):
+    """handle meetup deletion to make sure only the admin that created the
+    meetup can delete it"""
+    code = 401
+    description = "Only the admin that created this endpoint can delete it"
+
+
 class NoDataError(HTTPException):
     """handle missing data requested"""
     code = 404
