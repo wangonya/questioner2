@@ -107,3 +107,13 @@ class RsvpValidators:
         """rsvp status should only be 'yes', 'no', or 'maybe'"""
         if status not in ("yes", "no", "maybe"):
             raise InvalidRsvpStatusError
+
+
+class AnswerValidators:
+    """answers validators"""
+    @staticmethod
+    def check_duplicate_answer(body, q_id):
+        """check if an answer with similar body exists in same question"""
+        from ..questions.comment import AnswerQuestionsModel
+        if AnswerQuestionsModel.find_duplicate_answer(body, q_id):
+            raise DuplicateDataError

@@ -10,6 +10,7 @@ from .meetups.meetups import PostMeetups, Meetups, GetSpecificMeetup
 from .questions.post_questions import PostQuestion
 from .questions.vote import Upvote, Downvote
 from .meetups.rsvps import Rsvp
+from .questions.comment import Comment
 
 
 def create_app(default_config):
@@ -40,5 +41,6 @@ def create_app(default_config):
     api.add_resource(Upvote, '/questions/<int:q_id>/upvote')
     api.add_resource(Downvote, '/questions/<int:q_id>/downvote')
     api.add_resource(Rsvp, '/meetups/<int:m_id>/rsvps')
+    api.add_resource(Comment, '/comments/<int:q_id>')
 
     return app
