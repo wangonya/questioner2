@@ -87,7 +87,7 @@ class RsvpsModel:
     @staticmethod
     def update_rsvp(status, user, meetup):
         """update rsvp"""
-        delete_query = ('UPDATE rsvps SET status = {} '
-                        'WHERE creator = {} '
-                        'AND meetup = {}'.format(status, user["id"], meetup))
-        MeetupModel.cursor.execute(delete_query)
+        delete_query = ('UPDATE rsvps SET status = %s '
+                        'WHERE creator = %s '
+                        'AND meetup = %s')
+        MeetupModel.cursor.execute(delete_query, (status, user["id"], meetup))
