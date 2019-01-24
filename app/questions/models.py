@@ -36,6 +36,44 @@ class PostQuestionsModel:
         question = cls.cursor.fetchone()
         return question
 
+    @classmethod
+    def find_meetup_by_q_id(cls, q_id):
+        """find meetup with matching question id"""
+        cls.cursor.execute('SELECT * '
+                           'FROM questions '
+                           'WHERE id = (%s)', (q_id,))
+        question = cls.cursor.fetchone()
+        return question
+
+
+class AnswerQuestionsModel:
+    """model to handle answers data"""
+    def __init__(self, body, creator, meetup, question):
+        self.body = body
+        self.creator = creator
+        self.meetup = meetup
+        self.question = question
+
+    def save_answer_to_db(self):
+        """save entered answer to db"""
+        insert_query = ('INSERT INTO answers '
+                        '(body, creator, meetup, question) '
+                        'VALUES (%s, %s, %s, %s);')
+        PostQuestionsModel.cursor.execute(insert_query,
+                                          (self.body, self.creator, self.meetup,
+                                           self.question))
+
+
+    @classmethod
+    def find_duplicate_answer(cls, body, question):
+        """check if a similar answer exists in the question"""
+        select_query = ('SELECT * FROM answers '
+                        'WHERE question = %s '
+                        'AND body = %s')
+        PostQuestionsModel.cursor.execute(select_query, (question, body))
+        answer = PostQuestionsModel.cursor.fetchone()
+        return answer
+
 
 class VoteModel:
     """model to handle votes data"""
