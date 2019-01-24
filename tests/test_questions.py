@@ -49,3 +49,29 @@ def test_question_exists():
 
     assert str(err.value) == "404 Not Found: " \
                              "The data you requested for does not exist"
+
+
+def test_post_comment(new_comment, cursor, main, dev_cursor):
+    """test post comment endpoint"""
+    insert_query = ('INSERT INTO answers '
+                    '(body, creator, meetup, question) '
+                    'VALUES (%s, %s, %s, %s);')
+    cursor.execute(insert_query,
+                   (new_comment.body, new_comment.creator, new_comment.meetup,
+                    new_comment.question))
+
+    cursor.execute('SELECT * FROM answers;')
+    data = cursor.fetchone()
+    assert isinstance(data["id"], int)
+    assert new_comment.body == data["body"] == "test comment"
+    assert isinstance(data["creator"], int)
+    assert isinstance(data["meetup"], int)
+
+    dev_cursor.execute('SELECT * '
+                       'FROM questions '
+                       'WHERE title = (%s)', ("test title",))
+    question = dev_cursor.fetchone()
+
+    res = post_json(main, "/api/v2/comments/{}".format(question["id"]), new_comment.__dict__)
+    assert res.status_code == 201
+    assert b"answer submitted successfully" in res.data

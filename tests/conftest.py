@@ -8,10 +8,10 @@ from flask_jwt_extended import create_access_token
 
 import app
 from app.auth.models import AuthModel
-from app.meetups.models import MeetupModel
+from app.meetups.models import MeetupModel, RsvpsModel
 from app.db import CreateTables
 from app.utils.validators import DbValidators
-from app.questions.models import PostQuestionsModel, VoteModel
+from app.questions.models import PostQuestionsModel, VoteModel, AnswerQuestionsModel
 
 
 @pytest.fixture
@@ -117,11 +117,41 @@ def new_vote(cursor):
     yield vote
 
 
+@pytest.fixture
+def new_comment(cursor):
+    """reuse this in comment test to test post new comment"""
+    cursor.execute('SELECT * '
+                   'FROM questions '
+                   'WHERE title = (%s)', ("test title",))
+    question = cursor.fetchone()
+    comment = AnswerQuestionsModel("test comment", question["creator"],
+                                   question["meetup"], question["id"])
+    yield comment
+
+
+@pytest.fixture
+def new_rsvp(cursor):
+    """reuse this in rsvp test to test post new rsvp"""
+    cursor.execute('SELECT * '
+                   'FROM meetups '
+                   'WHERE title = (%s)', ("sample meetup",))
+    meetup = cursor.fetchone()
+    rsvp = RsvpsModel("yes", 1, meetup["id"])
+    yield rsvp
+
+
 def post_json(main, url, json_dict):
     """helper function to post a json dict to the specified url """
     access_token = create_access_token('admin@questioner.com')
     headers = {'Authorization': 'Bearer {}'.format(access_token)}
     return main.post(url, data=json.dumps(json_dict), content_type='application/json', headers=headers)
+
+
+def delete(main, url):
+    """helper function to delete data in the specified url"""
+    access_token = create_access_token('admin@questioner.com')
+    headers = {'Authorization': 'Bearer {}'.format(access_token)}
+    return main.delete(url, headers=headers)
 
 
 def patch_json(main, url, json_dict):

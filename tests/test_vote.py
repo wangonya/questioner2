@@ -45,9 +45,3 @@ def test_downvote(main, new_vote, dev_cursor):
     res = patch_json(main, "/api/v2/questions/{}/downvote".format(question["id"]), new_vote.__dict__)
     assert res.status_code == 201
     assert b"vote added successfully" in res.data
-
-    dev_cursor.execute('DELETE FROM questions '
-                       'WHERE title = (%s)', ("test title",))
-
-    dev_cursor.execute('DELETE FROM meetups '
-                       'WHERE title = (%s)', ("sample meetup",))
