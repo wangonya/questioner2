@@ -84,6 +84,7 @@ class VoteModel:
         """check if user has already voted"""
         PostQuestionsModel.cursor.execute('SELECT * '
                                           'FROM votes '
-                                          'WHERE question = (%s)', (q_id,))
+                                          'WHERE question = {} '
+                                          'AND creator = {}'.format(q_id, user["id"]))
         vote = PostQuestionsModel.cursor.fetchone()
         return vote

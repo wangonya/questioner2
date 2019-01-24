@@ -1,7 +1,4 @@
-import pytest
-
 from .conftest import patch_json
-from app.utils import error_handlers, validators
 
 
 def test_upvote(main, cursor, new_vote, dev_cursor):
