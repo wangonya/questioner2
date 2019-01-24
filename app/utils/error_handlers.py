@@ -53,3 +53,9 @@ class NoDataError(HTTPException):
     """handle missing data requested"""
     code = 404
     description = "The data you requested for does not exist"
+
+
+class InvalidRsvpStatusError(HTTPException):
+    """handle invalid rsvp status"""
+    code = 400
+    description = "Rsvp status can only be 'yes', 'no' or 'maybe'"
