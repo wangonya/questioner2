@@ -8,7 +8,7 @@ from .auth.signup import Signup
 from .auth.login import Login
 from .meetups.meetups import PostMeetups, Meetups, GetSpecificMeetup
 from .questions.post_questions import PostQuestion
-from .questions.vote import Upvote
+from .questions.vote import Upvote, Downvote
 
 
 def create_app(default_config):
@@ -37,5 +37,6 @@ def create_app(default_config):
     api.add_resource(GetSpecificMeetup, '/meetups/<int:m_id>')
     api.add_resource(PostQuestion, '/meetups/<int:m_id>/questions')
     api.add_resource(Upvote, '/questions/<int:q_id>/upvote')
+    api.add_resource(Downvote, '/questions/<int:q_id>/downvote')
 
     return app
