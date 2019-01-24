@@ -147,6 +147,13 @@ def post_json(main, url, json_dict):
     return main.post(url, data=json.dumps(json_dict), content_type='application/json', headers=headers)
 
 
+def delete(main, url):
+    """helper function to delete data in the specified url"""
+    access_token = create_access_token('admin@questioner.com')
+    headers = {'Authorization': 'Bearer {}'.format(access_token)}
+    return main.delete(url, headers=headers)
+
+
 def patch_json(main, url, json_dict):
     """helper function to patch a json dict to the specified url """
     access_token = create_access_token('admin@questioner.com')
