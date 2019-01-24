@@ -11,7 +11,7 @@ from app.auth.models import AuthModel
 from app.meetups.models import MeetupModel
 from app.db import CreateTables
 from app.utils.validators import DbValidators
-from app.questions.models import PostQuestionsModel, VoteModel
+from app.questions.models import PostQuestionsModel, VoteModel, AnswerQuestionsModel
 
 
 @pytest.fixture
@@ -115,6 +115,18 @@ def new_vote(cursor):
     question = cursor.fetchone()
     vote = VoteModel(1, question["id"], 1)
     yield vote
+
+
+@pytest.fixture
+def new_comment(cursor):
+    """reuse this in comment test to test post new comment"""
+    cursor.execute('SELECT * '
+                   'FROM questions '
+                   'WHERE title = (%s)', ("test title",))
+    question = cursor.fetchone()
+    comment = AnswerQuestionsModel("test comment", question["creator"],
+                                   question["meetup"], question["id"])
+    yield comment
 
 
 def post_json(main, url, json_dict):
