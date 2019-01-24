@@ -91,3 +91,10 @@ class QuestionValidators:
         from ..questions.models import PostQuestionsModel
         if PostQuestionsModel.find_question(title):
             raise DuplicateDataError
+
+    @staticmethod
+    def check_question_exists(q_id):
+        """check if the requested question exists"""
+        from ..questions.models import VoteModel
+        if not VoteModel.get_specific_question(q_id):
+            raise NoDataError
