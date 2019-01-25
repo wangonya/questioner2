@@ -12,10 +12,6 @@ class Config(object):
     PROPAGATE_EXCEPTIONS = True
 
 
-class ProductionConfig(Config):
-    """prod config options"""
-
-
 class DevelopmentConfig(Config):
     """dev config options"""
     DEVELOPMENT = True
@@ -28,7 +24,6 @@ class TestingConfig(Config):
 
 
 APP_CONFIG = {
-        "prod": ProductionConfig,
         "dev": DevelopmentConfig,
         "testing": TestingConfig
     }
