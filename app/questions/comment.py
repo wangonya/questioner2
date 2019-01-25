@@ -3,16 +3,16 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from ..questions.models import PostQuestionsModel, AnswerQuestionsModel, VoteModel
 from ..auth.models import AuthModel
-from ..utils.validators import AnswerValidators, QuestionValidators
+from ..utils.validators import AnswerValidators, QuestionValidators, GeneralValidators
 
 
 class Comment(Resource):
     """post answer endpoint resource"""
     parser = reqparse.RequestParser()
     parser.add_argument("body",
-                        type=str,
+                        type=GeneralValidators.non_empty_string,
                         required=True,
-                        help="This field cannot be left blank!")
+                        nullable=False,)
 
     @jwt_required
     def post(self, q_id):
