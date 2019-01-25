@@ -5,7 +5,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from ..meetups.models import MeetupModel
 from ..auth.models import AuthModel
-from ..utils.validators import MeetupValidators
+from ..utils.validators import MeetupValidators, GeneralValidators
 from ..utils.error_handlers import NoDataError
 
 
@@ -13,17 +13,17 @@ class Meetups(Resource):
     """upcoming meetups endpoint resource"""
     parser = reqparse.RequestParser()
     parser.add_argument("title",
-                        type=str,
+                        type=GeneralValidators.non_empty_string,
                         required=True,
-                        help="This field cannot be left blank!")
+                        nullable=False,)
     parser.add_argument("location",
-                        type=str,
+                        type=GeneralValidators.non_empty_string,
                         required=True,
-                        help="This field cannot be left blank!")
+                        nullable=False,)
     parser.add_argument("happening_on",
-                        type=str,
+                        type=GeneralValidators.non_empty_string,
                         required=True,
-                        help="This field cannot be left blank!")
+                        nullable=False,)
     parser.add_argument("image",
                         type=str)
     parser.add_argument("tags", action="append")
