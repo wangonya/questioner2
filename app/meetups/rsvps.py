@@ -2,21 +2,21 @@ from flask_restful import Resource, reqparse
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from ..meetups.models import RsvpsModel
 from ..auth.models import AuthModel
-from ..utils.validators import RsvpValidators, MeetupValidators
+from ..utils.validators import RsvpValidators, MeetupValidators, GeneralValidators
 
 
 class Rsvp(Resource):
     """resource for Rsvp endpoint"""
     parser = reqparse.RequestParser()
     parser.add_argument("status",
-                        type=str,
+                        type=GeneralValidators.non_empty_string,
                         required=True,
-                        help="This field cannot be left blank!")
+                        nullable=False,)
 
     @jwt_required
     def post(self, m_id):
         """do POST on rsvp endpoint"""
-        data = Rsvp.parser.parse_args()
+        data = self.parser.parse_args()
         status = data["status"]
         user = get_jwt_identity()
         userid = AuthModel.find_by_email(user)
