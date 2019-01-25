@@ -1,7 +1,7 @@
 from flask_jwt_extended import create_access_token
 from flask_restful import Resource, reqparse
 
-from ..utils.validators import AuthValidators
+from ..utils.validators import AuthValidators, GeneralValidators
 from ..auth.models import AuthModel
 
 
@@ -9,21 +9,21 @@ class Signup(Resource):
     """signup endpoint resource"""
     parser = reqparse.RequestParser()
     parser.add_argument("firstname",
-                        type=str,
+                        type=GeneralValidators.non_empty_string,
                         required=True,
-                        help="This field cannot be left blank!")
+                        nullable=False,)
     parser.add_argument("lastname",
-                        type=str,
+                        type=GeneralValidators.non_empty_string,
                         required=True,
-                        help="This field cannot be left blank!")
+                        nullable=False,)
     parser.add_argument("email",
                         type=str,
                         required=True,
-                        help="This field cannot be left blank!")
+                        nullable=False,)
     parser.add_argument("password",
-                        type=str,
+                        type=GeneralValidators.non_empty_string,
                         required=True,
-                        help="This field cannot be left blank!")
+                        nullable=False,)
     parser.add_argument("phonenumber",
                         type=str)
 
