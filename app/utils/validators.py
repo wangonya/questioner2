@@ -3,7 +3,7 @@ import psycopg2
 
 from .error_handlers import (DatabaseConnectionError, TableCreationError, InvalidEmailFormatError,
                              UserAlreadyExistsError, InvalidPasswordLengthError, UserLoginError,
-                             DuplicateDataError, AdminProtectedError, NoDataError, InvalidRsvpStatusError,
+                             DuplicateDataError, AdminProtectedError, InvalidRsvpStatusError,
                              MeetupIdDoesNotExist, QuestionIdDoesNotExist)
 
 
@@ -106,7 +106,7 @@ class RsvpValidators:
     @staticmethod
     def check_proper_rsvp(status):
         """rsvp status should only be 'yes', 'no', or 'maybe'"""
-        if status not in ("yes", "no", "maybe"):
+        if status not in ("yes", "Yes", "YES", "NO", "No", "no", "MAYBE", "Maybe", "maybe"):
             raise InvalidRsvpStatusError
 
 
@@ -118,3 +118,13 @@ class AnswerValidators:
         from ..questions.comment import AnswerQuestionsModel
         if AnswerQuestionsModel.find_duplicate_answer(body, q_id):
             raise DuplicateDataError
+
+
+class GeneralValidators:
+    """validators for data that doesn't belong to any particular route"""
+    @staticmethod
+    def non_empty_string(s):
+        """check for empty strings"""
+        if not s.strip():
+            raise ValueError("Must not be empty string")
+        return s
