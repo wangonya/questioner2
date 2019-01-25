@@ -1,5 +1,6 @@
 import re
 import psycopg2
+import datetime
 
 from .error_handlers import (DatabaseConnectionError, TableCreationError, InvalidEmailFormatError,
                              UserAlreadyExistsError, InvalidPasswordLengthError, UserLoginError,
@@ -128,3 +129,12 @@ class GeneralValidators:
         if not s.strip():
             raise ValueError("Must not be empty string")
         return s
+
+    @staticmethod
+    def date_format(s):
+        """check for date format"""
+        try:
+            datetime.datetime.strptime(s, '%Y-%m-%d')
+            return s
+        except ValueError:
+            raise ValueError("Incorrect date format, should be YYYY-MM-DD")
