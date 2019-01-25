@@ -61,3 +61,15 @@ def test_meetups_post_admin(dev_cursor):
 
     dev_cursor.execute('DELETE FROM users '
                        'WHERE email = (%s)', ("test@gmail.com",))
+
+
+def test_empty_string():
+    """test that an exception is raised if an empty string is passed in"""
+    with pytest.raises(ValueError):
+        assert validators.GeneralValidators.non_empty_string("  ")
+
+
+def test_date_format():
+    """test that an exception is raised if an invalid date format is passed in"""
+    with pytest.raises(ValueError):
+        assert validators.GeneralValidators.date_format("baddate")

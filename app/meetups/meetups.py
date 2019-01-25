@@ -21,7 +21,7 @@ class Meetups(Resource):
                         required=True,
                         nullable=False,)
     parser.add_argument("happening_on",
-                        type=GeneralValidators.non_empty_string,
+                        type=GeneralValidators.date_format,
                         required=True,
                         nullable=False,)
     parser.add_argument("image",
