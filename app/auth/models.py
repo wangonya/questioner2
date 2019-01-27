@@ -1,7 +1,8 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from ..db import InitDb
 from ..utils.error_handlers import UserLoginError
+from ..db.insert import InsertDataToDb
+from ..db.select import SelectDataFromDb
 
 
 class AuthModel:
@@ -17,22 +18,17 @@ class AuthModel:
 
     def save_to_db(self):
         """save data to db"""
-        insert_query = ('INSERT INTO users '
-                        '(firstname, lastname, email, phonenumber, '
-                        'password, username) '
-                        'VALUES (%s, %s, %s, %s, %s, %s);')
-        InitDb.cursor.execute(insert_query,
-                              (self.firstname, self.lastname, self.email,
-                               self.phonenumber, self.password, self.username))
+        InsertDataToDb.save_data_to_db("users",
+                                       "firstname", "lastname", "email",
+                                       "phonenumber", "password", "username",
+                                       self.firstname, self.lastname, self.email,
+                                       self.phonenumber, self.password, self.username)
 
     @staticmethod
     def verify_hash(email, unhashed):
         """decode password hash and verify that it matches the passed in password"""
         try:
-            InitDb.cursor.execute('SELECT password '
-                                  'FROM users '
-                                  'WHERE email = (%s)', (email,))
-            hashed = InitDb.cursor.fetchone()
+            hashed = SelectDataFromDb.conditional_where_select("users", "email", email)
             if not check_password_hash(hashed["password"], unhashed):
                 raise UserLoginError
             else:
