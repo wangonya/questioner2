@@ -3,7 +3,7 @@ from flask_restful import Api, Resource
 from flask_jwt_extended import JWTManager
 
 from config import APP_CONFIG
-from .db import CreateTables
+from .db import InitDb
 from .auth.signup import Signup
 from .auth.login import Login
 from .meetups.meetups import PostMeetups, Meetups, GetSpecificMeetup

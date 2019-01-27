@@ -97,7 +97,7 @@ errors = {
         "status": 500,
     },
     "DeleteProtectedError": {
-        "message": "Only the admin that created this endpoint can delete it",
+        "message": "Only the admin that created this meetup can delete it",
         "status": 401,
     },
     "MeetupIdDoesNotExist": {

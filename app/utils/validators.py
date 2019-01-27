@@ -44,15 +44,15 @@ class AuthValidators:
     def check_email_exists(email):
         """check if email already exists to avoid duplicates.
         Authmodel imported here instead of at the top to circumvent circular import loop"""
-        from ..auth.models import AuthModel
-        if AuthModel.find_by_email(email):
+        from ..db.select import SelectDataFromDb
+        if SelectDataFromDb.conditional_where_select("users", "email", email):
             raise UserAlreadyExistsError
 
     @staticmethod
     def confirm_login_email(email):
         """check if email already exists for login validation"""
-        from ..auth.models import AuthModel
-        if not AuthModel.find_by_email(email):
+        from ..db.select import SelectDataFromDb
+        if not SelectDataFromDb.conditional_where_select("users", "email", email):
             raise UserLoginError
 
     @staticmethod
@@ -67,8 +67,8 @@ class MeetupValidators:
     @staticmethod
     def check_duplicate_meetup(title):
         """check if a meetup with the same title already exists"""
-        from ..meetups.models import MeetupModel
-        if MeetupModel.find_meetup(title):
+        from ..db.select import SelectDataFromDb
+        if SelectDataFromDb.conditional_where_select("meetups", "title", title):
             raise DuplicateDataError
 
     @staticmethod
@@ -88,17 +88,17 @@ class MeetupValidators:
 class QuestionValidators:
     """question methods validators"""
     @staticmethod
-    def check_duplicate_question(title):
+    def check_duplicate_question(title, m_id):
         """check if a question with the same title already exists"""
-        from ..questions.models import PostQuestionsModel
-        if PostQuestionsModel.find_question(title):
+        from ..db.select import SelectDataFromDb
+        if SelectDataFromDb.conditional_where_and_select("questions", "title", title, "meetup", m_id):
             raise DuplicateDataError
 
     @staticmethod
     def check_question_exists(q_id):
         """check if the requested question exists"""
-        from ..questions.models import VoteModel
-        if not VoteModel.get_specific_question(q_id):
+        from ..db.select import SelectDataFromDb
+        if not SelectDataFromDb.conditional_where_select("questions", "id", q_id):
             raise QuestionIdDoesNotExist
 
 
@@ -116,8 +116,8 @@ class AnswerValidators:
     @staticmethod
     def check_duplicate_answer(body, q_id):
         """check if an answer with similar body exists in same question"""
-        from ..questions.comment import AnswerQuestionsModel
-        if AnswerQuestionsModel.find_duplicate_answer(body, q_id):
+        from ..db.select import SelectDataFromDb
+        if SelectDataFromDb.conditional_where_and_select("answers", "body", body, "question", q_id):
             raise DuplicateDataError
 
 

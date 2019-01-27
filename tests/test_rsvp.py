@@ -25,4 +25,8 @@ def test_post_rsvp(new_rsvp, cursor, main, dev_cursor):
     assert res.status_code == 201
     assert b"meetup rsvp successful" in res.data
 
+    res = post_json(main, "/api/v2/meetups/{}/rsvps".format(meetup["id"]), new_rsvp.__dict__)
+    assert res.status_code == 200
+    assert b"meetup rsvp update successful" in res.data
+
     cursor.execute('TRUNCATE rsvps RESTART IDENTITY;')

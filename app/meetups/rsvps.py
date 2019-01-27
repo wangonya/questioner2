@@ -1,8 +1,10 @@
 from flask_restful import Resource, reqparse
 from flask_jwt_extended import jwt_required, get_jwt_identity
+
 from ..meetups.models import RsvpsModel
-from ..auth.models import AuthModel
-from ..utils.validators import RsvpValidators, MeetupValidators, GeneralValidators
+from ..utils.validators import (RsvpValidators, MeetupValidators,
+                                GeneralValidators)
+from ..db.select import SelectDataFromDb
 
 
 class Rsvp(Resource):
@@ -19,7 +21,7 @@ class Rsvp(Resource):
         data = self.parser.parse_args()
         status = data["status"]
         user = get_jwt_identity()
-        userid = AuthModel.find_by_email(user)
+        userid = SelectDataFromDb.conditional_where_select("users", "email", user)
 
         MeetupValidators.check_meetup_exists(m_id)
         RsvpValidators.check_proper_rsvp(status)
@@ -32,7 +34,7 @@ class Rsvp(Resource):
                 "msg": "meetup rsvp successful",
                 "data": [{
                     "m_id": m_id,
-                    "status": status
+                    "status": status.lower()
                 }]
             }
             return response, 201
@@ -43,7 +45,7 @@ class Rsvp(Resource):
                 "msg": "meetup rsvp update successful",
                 "data": [{
                     "m_id": m_id,
-                    "status": status
+                    "status": status.lower()
                 }]
             }
             return response, 200

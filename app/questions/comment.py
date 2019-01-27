@@ -1,9 +1,10 @@
 from flask_restful import Resource, reqparse
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
-from ..questions.models import PostQuestionsModel, AnswerQuestionsModel, VoteModel
-from ..auth.models import AuthModel
-from ..utils.validators import AnswerValidators, QuestionValidators, GeneralValidators
+from ..questions.models import AnswerQuestionsModel
+from ..utils.validators import (AnswerValidators, QuestionValidators,
+                                GeneralValidators)
+from ..db.select import SelectDataFromDb
 
 
 class Comment(Resource):
@@ -21,15 +22,14 @@ class Comment(Resource):
         body = data["body"]
 
         user = get_jwt_identity()
-        creator = AuthModel.find_by_email(user)
+        creator = SelectDataFromDb.conditional_where_select("users", "email", user)
 
         QuestionValidators.check_question_exists(q_id)
-        question = VoteModel.get_specific_question(q_id)
-        m_id = PostQuestionsModel.find_meetup_by_q_id(q_id)
+        question = SelectDataFromDb.conditional_where_select("questions", "id", q_id)
 
         AnswerValidators.check_duplicate_answer(body, q_id)
 
-        answer = AnswerQuestionsModel(body, creator["id"], m_id["meetup"], q_id)
+        answer = AnswerQuestionsModel(body, creator["id"], question["meetup"], q_id)
         answer.save_answer_to_db()
 
         response = {

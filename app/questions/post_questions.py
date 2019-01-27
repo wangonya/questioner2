@@ -2,8 +2,9 @@ from flask_restful import Resource, reqparse
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from ..questions.models import PostQuestionsModel
-from ..auth.models import AuthModel
-from ..utils.validators import QuestionValidators, MeetupValidators, GeneralValidators
+from ..utils.validators import (QuestionValidators, MeetupValidators,
+                                GeneralValidators)
+from ..db.select import SelectDataFromDb
 
 
 class PostQuestion(Resource):
@@ -26,11 +27,11 @@ class PostQuestion(Resource):
         body = data["body"]
 
         user = get_jwt_identity()
-        creator = AuthModel.find_by_email(user)
+        creator = SelectDataFromDb.conditional_where_select("users", "email", user)
 
         MeetupValidators.check_meetup_exists(m_id)
 
-        QuestionValidators.check_duplicate_question(title)
+        QuestionValidators.check_duplicate_question(title, m_id)
 
         question = PostQuestionsModel(title, creator["id"], body, m_id)
         question.save_question_to_db()
