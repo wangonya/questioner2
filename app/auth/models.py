@@ -1,17 +1,11 @@
-import os
-
 from werkzeug.security import generate_password_hash, check_password_hash
-from psycopg2.extras import RealDictCursor
 
-from ..utils.validators import DbValidators
+from ..db import InitDb
 from ..utils.error_handlers import UserLoginError
 
 
 class AuthModel:
     """model for auth tables"""
-    cnxn = DbValidators.connect_to_db(os.getenv("DEV_DB_URI"))
-    cnxn.autocommit = True
-    cursor = cnxn.cursor(cursor_factory=RealDictCursor)
 
     def __init__(self, firstname, lastname, email, phonenumber, password):
         self.firstname = firstname
@@ -27,27 +21,18 @@ class AuthModel:
                         '(firstname, lastname, email, phonenumber, '
                         'password, username) '
                         'VALUES (%s, %s, %s, %s, %s, %s);')
-        AuthModel.cursor.execute(insert_query,
-                                 (self.firstname, self.lastname, self.email,
-                                  self.phonenumber, self.password, self.username))
+        InitDb.cursor.execute(insert_query,
+                              (self.firstname, self.lastname, self.email,
+                               self.phonenumber, self.password, self.username))
 
-    @classmethod
-    def find_by_email(cls, email):
-        """find user by email"""
-        cls.cursor.execute('SELECT * '
-                           'FROM users '
-                           'WHERE email = (%s)', (email,))
-        user = cls.cursor.fetchone()
-        return user
-
-    @classmethod
-    def verify_hash(cls, email, unhashed):
+    @staticmethod
+    def verify_hash(email, unhashed):
         """decode password hash and verify that it matches the passed in password"""
         try:
-            cls.cursor.execute('SELECT password '
-                               'FROM users '
-                               'WHERE email = (%s)', (email,))
-            hashed = cls.cursor.fetchone()
+            InitDb.cursor.execute('SELECT password '
+                                  'FROM users '
+                                  'WHERE email = (%s)', (email,))
+            hashed = InitDb.cursor.fetchone()
             if not check_password_hash(hashed["password"], unhashed):
                 raise UserLoginError
             else:
