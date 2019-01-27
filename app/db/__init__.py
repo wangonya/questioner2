@@ -1,13 +1,16 @@
 import os
+
 from werkzeug.security import generate_password_hash
+from psycopg2.extras import RealDictCursor
 
 from ..utils.validators import DbValidators
 
 
-class CreateTables:
+class InitDb:
     """create required db tables"""
     cnxn = DbValidators.connect_to_db(os.getenv("DEV_DB_URI"))
-    cursor = cnxn.cursor()
+    cnxn.autocommit = True
+    cursor = cnxn.cursor(cursor_factory=RealDictCursor)
 
     users_table = ('CREATE TABLE IF NOT EXISTS users'
                    '(id SERIAL PRIMARY KEY,'
