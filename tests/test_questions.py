@@ -33,10 +33,14 @@ def test_post_question(main, cursor, new_question, dev_cursor):
     assert b"question submitted successfully" in res.data
 
 
-def test_duplicate_question():
+def test_duplicate_question(dev_cursor):
     """test that an exception is raised if duplicate data is passed in"""
+    dev_cursor.execute('SELECT * '
+                       'FROM questions '
+                       'WHERE title = (%s)', ("test title",))
+    question = dev_cursor.fetchone()
     with pytest.raises(error_handlers.DuplicateDataError):
-        validators.QuestionValidators.check_duplicate_question("test title")
+        validators.QuestionValidators.check_duplicate_question(question["title"], question["meetup"])
 
 
 def test_question_exists():
