@@ -9,7 +9,7 @@ from flask_jwt_extended import create_access_token
 import app
 from app.auth.models import AuthModel
 from app.meetups.models import MeetupModel, RsvpsModel
-from app.db import CreateTables
+from app.db import InitDb
 from app.utils.validators import DbValidators
 from app.questions.models import PostQuestionsModel, VoteModel, AnswerQuestionsModel
 
@@ -36,7 +36,7 @@ def cnxn(main):
 def cursor(cnxn):
     """testdb cursor fixture"""
     cursor = cnxn.cursor(cursor_factory=RealDictCursor)
-    tables = CreateTables.tables
+    tables = InitDb.tables
     DbValidators.create_tables(cnxn, cursor, *tables)
     default_admin = {
         "firstname": "fname",
