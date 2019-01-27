@@ -4,9 +4,9 @@ from flask_restful import Resource, reqparse
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from ..meetups.models import MeetupModel
-from ..auth.models import AuthModel
 from ..utils.validators import MeetupValidators, GeneralValidators
 from ..utils.error_handlers import NoDataError
+from ..db.select import SelectDataFromDb
 
 
 class Meetups(Resource):
@@ -51,7 +51,7 @@ class PostMeetups(Resource):
         data = Meetups.parser.parse_args()
 
         user = get_jwt_identity()
-        creator = AuthModel.find_by_email(user)
+        creator = SelectDataFromDb.conditional_where_select("users", "email", user)
         MeetupValidators.check_creator_is_admin(creator)
 
         title = data["title"]
