@@ -1,5 +1,6 @@
 from ..db import InitDb
 from ..db.select import SelectDataFromDb
+from ..db.insert import InsertDataToDb
 
 
 class MeetupModel:
@@ -16,13 +17,11 @@ class MeetupModel:
 
     def save_meetup_to_db(self):
         """save entered meetup data to db"""
-        insert_query = ('INSERT INTO meetups '
-                        '(title, creator, location, '
-                        'happening_on, tags, image) '
-                        'VALUES (%s, %s, %s, %s, %s, %s);')
-        InitDb.cursor.execute(insert_query,
-                              (self.title, self.creator, self.location,
-                               self.happening_on, self.tags, self.image))
+        InsertDataToDb.save_data_to_db("meetups",
+                                       "title", "creator", "location",
+                                       "happening_on", "tags", "image",
+                                       self.title, self.creator, self.location,
+                                       self.happening_on, self.tags, self.image)
 
     @staticmethod
     def get_upcoming_meetups():
