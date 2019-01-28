@@ -6,7 +6,7 @@ from config import APP_CONFIG
 from .db import InitDb
 from .auth.signup import Signup
 from .auth.login import Login
-from .meetups.meetups import PostMeetups, Meetups, GetSpecificMeetup
+from .meetups.meetups import PostMeetups, Meetups, GetSpecificMeetup, GetAdminMeetup
 from .questions.post_questions import PostQuestion
 from .questions.vote import Upvote, Downvote
 from .meetups.rsvps import Rsvp
@@ -51,5 +51,6 @@ def create_app(default_config):
     api.add_resource(Rsvp, '/meetups/<int:m_id>/rsvps', strict_slashes=False)
     api.add_resource(Comment, '/comments/<int:q_id>', strict_slashes=False)
     api.add_resource(DeleteMeetup, '/meetups/<int:m_id>', strict_slashes=False)
+    api.add_resource(GetAdminMeetup, '/admin/meetups', strict_slashes=False)
 
     return app
