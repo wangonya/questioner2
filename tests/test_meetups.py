@@ -1,7 +1,7 @@
 import datetime
 import pytest
 
-from .conftest import post_json
+from .conftest import post_json, admin_get
 from app.utils import error_handlers, validators
 
 
@@ -44,6 +44,12 @@ def test_get_upcoming_meetups(main):
     """test view upcoming meetups"""
     res = main.get('/api/v2/meetups/upcoming')
     assert res.status_code == 200
+
+
+def test_get_admin_meetups(main):
+    """test view upcoming meetups"""
+    res = admin_get(main, '/api/v2/admin/meetups')
+    assert res.status_code == 200 or res.status_code == 404
 
 
 def test_specific_meetup(main, dev_cursor):

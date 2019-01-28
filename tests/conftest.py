@@ -154,6 +154,13 @@ def delete(main, url):
     return main.delete(url, headers=headers)
 
 
+def admin_get(main, url):
+    """helper function to get admin protected data in the specified url"""
+    access_token = create_access_token('admin@questioner.com')
+    headers = {'Authorization': 'Bearer {}'.format(access_token)}
+    return main.get(url, headers=headers)
+
+
 def patch_json(main, url, json_dict):
     """helper function to patch a json dict to the specified url """
     access_token = create_access_token('admin@questioner.com')

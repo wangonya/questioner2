@@ -22,6 +22,15 @@ class SelectDataFromDb:
         return data
 
     @staticmethod
+    def conditional_where_select_all(table, column, data):
+        """helper function for conditional where selection"""
+        query = ('SELECT * FROM {} WHERE {} = %s'
+                 .format(table, column))
+        InitDb.cursor.execute(query, (data,))
+        data = InitDb.cursor.fetchall()
+        return data
+
+    @staticmethod
     def conditional_where_and_select(table, *args):
         """helper function for conditional where selection"""
         query = ('SELECT * FROM {} '

@@ -80,3 +80,9 @@ def test_past_date():
     """test that exception is rasied if past date is passed in"""
     with pytest.raises(error_handlers.PastDateError):
         assert validators.GeneralValidators.date_format("2015-02-06")
+
+
+def test_custom_404(main):
+    res = main.get("api/v2/bad/url")
+    assert res.status_code == 404
+    assert b"The url you requested for was not found" in res.data
