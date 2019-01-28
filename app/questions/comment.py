@@ -11,7 +11,7 @@ class Comment(Resource):
     """post answer endpoint resource"""
     parser = reqparse.RequestParser()
     parser.add_argument("body",
-                        type=GeneralValidators.non_empty_string,
+                        type=str,
                         required=True,
                         nullable=False,)
 
@@ -24,6 +24,7 @@ class Comment(Resource):
         user = get_jwt_identity()
         creator = SelectDataFromDb.conditional_where_select("users", "email", user)
 
+        GeneralValidators.non_empty_string(**data)
         QuestionValidators.check_question_exists(q_id)
         question = SelectDataFromDb.conditional_where_select("questions", "id", q_id)
 
