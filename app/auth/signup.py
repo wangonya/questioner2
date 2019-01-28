@@ -9,11 +9,11 @@ class Signup(Resource):
     """signup endpoint resource"""
     parser = reqparse.RequestParser()
     parser.add_argument("firstname",
-                        type=GeneralValidators.non_empty_string,
+                        type=str,
                         required=True,
                         nullable=False,)
     parser.add_argument("lastname",
-                        type=GeneralValidators.non_empty_string,
+                        type=str,
                         required=True,
                         nullable=False,)
     parser.add_argument("email",
@@ -21,7 +21,7 @@ class Signup(Resource):
                         required=True,
                         nullable=False,)
     parser.add_argument("password",
-                        type=GeneralValidators.non_empty_string,
+                        type=str,
                         required=True,
                         nullable=False,)
     parser.add_argument("phonenumber",
@@ -31,6 +31,8 @@ class Signup(Resource):
     def post():
         """do a POST to signup endpoint"""
         data = Signup.parser.parse_args()
+
+        GeneralValidators.non_empty_string(**data)
 
         AuthValidators.check_email_format(data["email"])
 

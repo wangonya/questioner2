@@ -11,11 +11,11 @@ class PostQuestion(Resource):
     """post question endpoint resource"""
     parser = reqparse.RequestParser()
     parser.add_argument("title",
-                        type=GeneralValidators.non_empty_string,
+                        type=str,
                         required=True,
                         nullable=False,)
     parser.add_argument("body",
-                        type=GeneralValidators.non_empty_string,
+                        type=str,
                         required=True,
                         nullable=False,)
 
@@ -29,6 +29,7 @@ class PostQuestion(Resource):
         user = get_jwt_identity()
         creator = SelectDataFromDb.conditional_where_select("users", "email", user)
 
+        GeneralValidators.non_empty_string(**data)
         MeetupValidators.check_meetup_exists(m_id)
 
         QuestionValidators.check_duplicate_question(title, m_id)

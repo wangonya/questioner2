@@ -7,7 +7,8 @@ class SelectDataFromDb:
     @staticmethod
     def general_select(table):
         """helper function for general selection (*)"""
-        InitDb.cursor.execute('SELECT * FROM {}'.format(table))
+        InitDb.cursor.execute('SELECT * FROM {} '
+                              'ORDER BY happening_on ASC'.format(table))
         data = InitDb.cursor.fetchall()
         return data
 

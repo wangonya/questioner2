@@ -30,10 +30,14 @@ def test_post_meetup(new_meetup, cursor, main):
     assert b"meetup created successfully" in res.data
 
 
-def test_duplicate_meetup():
+def test_duplicate_meetup(dev_cursor):
     """check duplicate meetup"""
     with pytest.raises(error_handlers.DuplicateDataError):
-        assert validators.MeetupValidators.check_duplicate_meetup("sample meetup")
+        dev_cursor.execute('SELECT * '
+                           'FROM meetups '
+                           'WHERE title = (%s)', ("sample meetup",))
+        meetup = dev_cursor.fetchone()
+        assert validators.MeetupValidators.check_duplicate_meetup("sample meetup", meetup["happening_on"])
 
 
 def test_get_upcoming_meetups(main):

@@ -1,11 +1,12 @@
 import re
 import psycopg2
-import datetime
+from datetime import datetime
 
 from .error_handlers import (DatabaseConnectionError, TableCreationError, InvalidEmailFormatError,
                              UserAlreadyExistsError, InvalidPasswordLengthError, UserLoginError,
                              DuplicateDataError, AdminProtectedError, InvalidRsvpStatusError,
-                             MeetupIdDoesNotExist, QuestionIdDoesNotExist)
+                             MeetupIdDoesNotExist, QuestionIdDoesNotExist, EmptyStringError,
+                             InvalidDateError, PastDateError)
 
 
 class DbValidators:
@@ -65,10 +66,10 @@ class AuthValidators:
 class MeetupValidators:
     """meetup methods validators"""
     @staticmethod
-    def check_duplicate_meetup(title):
+    def check_duplicate_meetup(title, date):
         """check if a meetup with the same title already exists"""
         from ..db.select import SelectDataFromDb
-        if SelectDataFromDb.conditional_where_select("meetups", "title", title):
+        if SelectDataFromDb.conditional_where_and_select("meetups", "title", title, "happening_on", date):
             raise DuplicateDataError
 
     @staticmethod
@@ -124,17 +125,20 @@ class AnswerValidators:
 class GeneralValidators:
     """validators for data that doesn't belong to any particular route"""
     @staticmethod
-    def non_empty_string(s):
+    def non_empty_string(**data):
         """check for empty strings"""
-        if not s.strip():
-            raise ValueError("Must not be empty string")
-        return s
+        for _, value in data.items():
+            if not value.strip():
+                raise EmptyStringError
+        return value
 
     @staticmethod
-    def date_format(s):
+    def date_format(date):
         """check for date format"""
         try:
-            datetime.datetime.strptime(s, '%Y-%m-%d')
-            return s
+            datetime.strptime(date, '%Y-%m-%d')
+            if datetime.strptime(date, '%Y-%m-%d') < datetime.now():
+                raise PastDateError
+            return date
         except ValueError:
-            raise ValueError("Incorrect date format, should be YYYY-MM-DD")
+            raise InvalidDateError

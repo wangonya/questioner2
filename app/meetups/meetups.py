@@ -13,20 +13,21 @@ class Meetups(Resource):
     """upcoming meetups endpoint resource"""
     parser = reqparse.RequestParser()
     parser.add_argument("title",
-                        type=GeneralValidators.non_empty_string,
+                        type=str,
                         required=True,
                         nullable=False,)
     parser.add_argument("location",
-                        type=GeneralValidators.non_empty_string,
+                        type=str,
                         required=True,
                         nullable=False,)
     parser.add_argument("happening_on",
-                        type=GeneralValidators.date_format,
+                        type=str,
                         required=True,
                         nullable=False,)
     parser.add_argument("image",
                         type=str)
-    parser.add_argument("tags", action="append")
+    parser.add_argument("tags",
+                        type=str)
 
     @staticmethod
     def get():
@@ -50,6 +51,9 @@ class PostMeetups(Resource):
         """do a POST to the meetups endpoint"""
         data = Meetups.parser.parse_args()
 
+        GeneralValidators.non_empty_string(**data)
+        GeneralValidators.date_format(data["happening_on"])
+
         user = get_jwt_identity()
         creator = SelectDataFromDb.conditional_where_select("users", "email", user)
         MeetupValidators.check_creator_is_admin(creator)
@@ -61,7 +65,7 @@ class PostMeetups(Resource):
         tags = data["tags"]
         image = data["image"]
 
-        MeetupValidators.check_duplicate_meetup(title)
+        MeetupValidators.check_duplicate_meetup(title, happening_on)
 
         meetup = MeetupModel(title, creator_id, location,
                              happening_on, tags, image)

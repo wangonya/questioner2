@@ -55,6 +55,18 @@ class QuestionIdDoesNotExist(HTTPException):
     """handle missing question"""
 
 
+class EmptyStringError(HTTPException):
+    """handle empty strings"""
+
+
+class InvalidDateError(HTTPException):
+    """handle invalid date formats"""
+
+
+class PastDateError(HTTPException):
+    """handle past date in data"""
+
+
 errors = {
     "UserAlreadyExistsError": {
         "message": "A user with that email already exists",
@@ -107,5 +119,17 @@ errors = {
     "QuestionIdDoesNotExist": {
         "message": "No question matching the id passed was found",
         "status": 404,
+    },
+    "EmptyStringError": {
+        "message": "Empty strings not allowed in the data",
+        "status": 400,
+    },
+    "InvalidDateError": {
+        "message": "Incorrect date format, should be YYYY-MM-DD",
+        "status": 400
+    },
+    "PastDateError": {
+        "message": "Date cannot be in the past",
+        "status": 400
     }
 }

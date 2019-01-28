@@ -11,7 +11,7 @@ class Rsvp(Resource):
     """resource for Rsvp endpoint"""
     parser = reqparse.RequestParser()
     parser.add_argument("status",
-                        type=GeneralValidators.non_empty_string,
+                        type=str,
                         required=True,
                         nullable=False,)
 
@@ -23,6 +23,7 @@ class Rsvp(Resource):
         user = get_jwt_identity()
         userid = SelectDataFromDb.conditional_where_select("users", "email", user)
 
+        GeneralValidators.non_empty_string(**data)
         MeetupValidators.check_meetup_exists(m_id)
         RsvpValidators.check_proper_rsvp(status)
 
