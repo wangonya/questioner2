@@ -91,7 +91,7 @@ def new_meetup(dev_cursor):
                        'FROM users '
                        'WHERE is_admin = (%s)', (True,))
     creator = dev_cursor.fetchone()
-    meetup = MeetupModel("sample meetup", creator["id"], "test location", "2019-01-22", "test tag", "test image")
+    meetup = MeetupModel("sample meetup", creator["id"], "test location", "2029-01-22", "test tag", "test image")
     yield meetup
 
 
