@@ -32,12 +32,6 @@ def create_app(default_config):
         response.status_code = 404
         return response
 
-    @app.errorhandler(500)
-    def page_not_found(e):
-        response = jsonify({'status': 404, 'message': 'Something went wrong. Please try again later'})
-        response.status_code = 500
-        return response
-
     class HelloWorld(Resource):
         """Project root route -- just shows hello world for testing"""
         @staticmethod
