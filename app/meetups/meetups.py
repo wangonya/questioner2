@@ -65,7 +65,7 @@ class PostMeetups(Resource):
         tags = data["tags"]
         image = data["image"]
 
-        MeetupValidators.check_duplicate_meetup(title)
+        MeetupValidators.check_duplicate_meetup(title, happening_on)
 
         meetup = MeetupModel(title, creator_id, location,
                              happening_on, tags, image)
