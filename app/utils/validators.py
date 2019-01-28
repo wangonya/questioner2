@@ -66,10 +66,10 @@ class AuthValidators:
 class MeetupValidators:
     """meetup methods validators"""
     @staticmethod
-    def check_duplicate_meetup(title):
+    def check_duplicate_meetup(title, date):
         """check if a meetup with the same title already exists"""
         from ..db.select import SelectDataFromDb
-        if SelectDataFromDb.conditional_where_select("meetups", "title", title):
+        if SelectDataFromDb.conditional_where_and_select("meetups", "title", title, "happening_on", date):
             raise DuplicateDataError
 
     @staticmethod
