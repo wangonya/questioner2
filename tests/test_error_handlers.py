@@ -65,11 +65,18 @@ def test_meetups_post_admin(dev_cursor):
 
 def test_empty_string():
     """test that an exception is raised if an empty string is passed in"""
-    with pytest.raises(ValueError):
-        assert validators.GeneralValidators.non_empty_string("  ")
+    with pytest.raises(error_handlers.EmptyStringError):
+        data = {"test": ""}
+        assert validators.GeneralValidators.non_empty_string(**data)
 
 
 def test_date_format():
     """test that an exception is raised if an invalid date format is passed in"""
-    with pytest.raises(ValueError):
+    with pytest.raises(error_handlers.InvalidDateError):
         assert validators.GeneralValidators.date_format("baddate")
+
+
+def test_past_date():
+    """test that exception is rasied if past date is passed in"""
+    with pytest.raises(error_handlers.PastDateError):
+        assert validators.GeneralValidators.date_format("2015-02-06")
