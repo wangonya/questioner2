@@ -46,12 +46,6 @@ def test_get_upcoming_meetups(main):
     assert res.status_code == 200
 
 
-def test_get_admin_meetups(main):
-    """test view upcoming meetups"""
-    res = admin_get(main, '/api/v2/admin/meetups')
-    assert res.status_code == 200 or res.status_code == 404
-
-
 def test_specific_meetup(main, dev_cursor):
     """test view specific meetup"""
     dev_cursor.execute('SELECT * '
