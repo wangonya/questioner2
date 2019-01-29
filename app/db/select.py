@@ -39,3 +39,13 @@ class SelectDataFromDb:
         InitDb.cursor.execute(query, (args[1], args[3]))
         data = InitDb.cursor.fetchone()
         return data
+
+    @staticmethod
+    def select_count(table, column, data):
+        """find sum of rows"""
+        query = ('SELECT COUNT (*) '
+                 'FROM {} '
+                 'WHERE {} = %s'.format(table, column))
+        InitDb.cursor.execute(query, (data, ))
+        total = InitDb.cursor.fetchone()
+        return total
