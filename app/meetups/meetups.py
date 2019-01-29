@@ -100,27 +100,3 @@ class GetSpecificMeetup(Resource):
         }
 
         return response, 200
-
-
-class GetAdminMeetup(Resource):
-    """get admin meetups"""
-    @staticmethod
-    @jwt_required
-    def get():
-        """GET all meetups by a certain admin"""
-        user = get_jwt_identity()
-        creator = SelectDataFromDb.conditional_where_select("users", "email", user)
-        MeetupValidators.check_creator_is_admin(creator)
-
-        meetups = SelectDataFromDb.conditional_where_select_all("meetups", "creator", creator["id"])
-        meetups = json.dumps(meetups, default=str)
-
-        if len(json.loads(meetups)) < 1:
-            raise NoDataError
-
-        response = {
-            "status": 200,
-            "data": json.loads(meetups)
-        }
-
-        return response, 200

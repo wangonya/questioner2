@@ -1,18 +1,20 @@
 from flask import Flask, Blueprint, jsonify
 from flask_restful import Api, Resource
 from flask_jwt_extended import JWTManager
+from flask_cors import CORS
 
 from config import APP_CONFIG
 from .db import InitDb
 from .auth.signup import Signup
 from .auth.login import Login
-from .meetups.meetups import PostMeetups, Meetups, GetSpecificMeetup, GetAdminMeetup
+from .meetups.meetups import PostMeetups, Meetups, GetSpecificMeetup
 from .questions.post_questions import PostQuestion
 from .questions.vote import Upvote, Downvote
 from .meetups.rsvps import Rsvp
 from .questions.comment import Comment
 from .meetups.delete import DeleteMeetup
 from .utils.error_handlers import errors
+from .auth.profile import UserProfile, AdminProfile
 
 
 def create_app(default_config):
@@ -23,6 +25,7 @@ def create_app(default_config):
     api = Api(api_bp, errors=errors)
     JWTManager(app)
     app.config['JWT_SECRET_KEY'] = 'questioner-jwt-secret'
+    CORS(app)
 
     app.register_blueprint(api_bp, url_prefix='/api/v2')
 
@@ -51,6 +54,7 @@ def create_app(default_config):
     api.add_resource(Rsvp, '/meetups/<int:m_id>/rsvps', strict_slashes=False)
     api.add_resource(Comment, '/comments/<int:q_id>', strict_slashes=False)
     api.add_resource(DeleteMeetup, '/meetups/<int:m_id>', strict_slashes=False)
-    api.add_resource(GetAdminMeetup, '/admin/meetups', strict_slashes=False)
+    api.add_resource(UserProfile, '/profile', strict_slashes=False)
+    api.add_resource(AdminProfile, '/admin', strict_slashes=False)
 
     return app
