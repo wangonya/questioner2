@@ -1,3 +1,4 @@
+from datetime import timedelta
 from flask import Flask, Blueprint, jsonify
 from flask_restful import Api, Resource
 from flask_jwt_extended import JWTManager
@@ -23,17 +24,27 @@ def create_app(default_config):
     app.config.from_object(APP_CONFIG[default_config])
     api_bp = Blueprint('api', __name__)
     api = Api(api_bp, errors=errors)
-    JWTManager(app)
+    jwt = JWTManager(app)
     app.config['JWT_SECRET_KEY'] = 'questioner-jwt-secret'
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=2)
     CORS(app)
 
     app.register_blueprint(api_bp, url_prefix='/api/v2')
 
     @app.errorhandler(404)
     def page_not_found(e):
+        """custom 404 handler"""
         response = jsonify({'status': 404, 'message': 'The url you requested for was not found'})
         response.status_code = 404
         return response
+
+    @jwt.expired_token_loader
+    def my_expired_token_callback():
+        """custom token expired message"""
+        return jsonify({
+            'status': 401,
+            'message': 'Your access token has expired'
+        }), 401
 
     class HelloWorld(Resource):
         """Project root route -- just shows hello world for testing"""
