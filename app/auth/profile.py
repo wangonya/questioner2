@@ -23,7 +23,7 @@ class UserProfile(Resource):
                          'WHERE r.status = %s '
                          'AND r.creator = %s '
                          'ORDER BY m_date ASC')
-        InitDb.cursor.execute(meetups_query, ('yes', 143))
+        InitDb.cursor.execute(meetups_query, ('yes', creator["id"]))
         meetups = json.dumps(InitDb.cursor.fetchall(), default=str)
 
         questions_query = ('SELECT q.title q_title, '
@@ -45,6 +45,7 @@ class UserProfile(Resource):
                 "meetups": json.loads(meetups),
                 "top_questions": json.loads(questions),
                 "user_email": user,
+                "is_admin": creator["is_admin"],
                 "asked": asked["count"],
                 "answered": answered["count"]
             }]
@@ -71,6 +72,7 @@ class AdminProfile(Resource):
             "data": [{
                 "meetups": json.loads(meetups),
                 "admin_email": user,
+                "is_admin": creator["is_admin"],
                 "meetups_posted": len(json.loads(meetups))
             }]
         }
