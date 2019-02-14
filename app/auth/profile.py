@@ -23,7 +23,7 @@ class UserProfile(Resource):
                          'WHERE r.status = %s '
                          'AND r.creator = %s '
                          'ORDER BY m_date ASC')
-        InitDb.cursor.execute(meetups_query, ('yes', 143))
+        InitDb.cursor.execute(meetups_query, ('yes', creator["id"]))
         meetups = json.dumps(InitDb.cursor.fetchall(), default=str)
 
         questions_query = ('SELECT q.title q_title, '
@@ -45,6 +45,7 @@ class UserProfile(Resource):
                 "meetups": json.loads(meetups),
                 "top_questions": json.loads(questions),
                 "user_email": user,
+                "is_admin": creator["is_admin"],
                 "asked": asked["count"],
                 "answered": answered["count"]
             }]
@@ -66,11 +67,22 @@ class AdminProfile(Resource):
         meetups = SelectDataFromDb.conditional_where_select_all("meetups", "creator", creator["id"])
         meetups = json.dumps(meetups, default=str)
 
+        questions_query = ('SELECT q.title q_title, '
+                           'q.created_on q_date '
+                           'FROM questions q '
+                           'LEFT JOIN meetups m ON q.meetup = m.id '
+                           'WHERE m.creator = {} '
+                           'ORDER BY q.votes ASC'.format(creator["id"]))
+        InitDb.cursor.execute(questions_query)
+        questions = json.dumps(InitDb.cursor.fetchall(), default=str)
+
         response = {
             "status": 200,
             "data": [{
                 "meetups": json.loads(meetups),
+                "questions": json.loads(questions),
                 "admin_email": user,
+                "is_admin": creator["is_admin"],
                 "meetups_posted": len(json.loads(meetups))
             }]
         }

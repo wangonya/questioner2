@@ -26,6 +26,7 @@ class InitDb:
     meetups_table = ('CREATE TABLE IF NOT EXISTS meetups'
                      '(id SERIAL PRIMARY KEY,'
                      'title VARCHAR(50) NOT NULL,'
+                     'details VARCHAR NOT NULL,'
                      'creator INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,'
                      'location VARCHAR(150) NOT NULL,'
                      'happening_on DATE NOT NULL,'

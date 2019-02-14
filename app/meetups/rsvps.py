@@ -32,7 +32,7 @@ class Rsvp(Resource):
             rsvp.save_rsvp_to_db()
             response = {
                 "status": 201,
-                "msg": "meetup rsvp successful",
+                "message": "meetup rsvp successful",
                 "data": [{
                     "m_id": m_id,
                     "status": status.lower()
@@ -43,7 +43,7 @@ class Rsvp(Resource):
             RsvpsModel.update_rsvp(status, userid, m_id)
             response = {
                 "status": 200,
-                "msg": "meetup rsvp update successful",
+                "message": "meetup rsvp update successful",
                 "data": [{
                     "m_id": m_id,
                     "status": status.lower()

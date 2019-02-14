@@ -1,18 +1,18 @@
 import datetime
 import pytest
 
-from .conftest import post_json, admin_get
+from .conftest import post_json
 from app.utils import error_handlers, validators
 
 
 def test_post_meetup(new_meetup, cursor, main):
     """test post meetup endpoint"""
     insert_query = ('INSERT INTO meetups '
-                    '(title, creator, location, happening_on, '
+                    '(title, details, creator, location, happening_on, '
                     'tags, image) '
-                    'VALUES (%s, %s, %s, %s, %s, %s);')
+                    'VALUES (%s, %s, %s, %s, %s, %s, %s);')
     cursor.execute(insert_query,
-                   (new_meetup.title, new_meetup.creator, new_meetup.location,
+                   (new_meetup.title, new_meetup.details, new_meetup.creator, new_meetup.location,
                     new_meetup.happening_on, new_meetup.tags, new_meetup.image))
 
     cursor.execute('SELECT * FROM meetups;')
