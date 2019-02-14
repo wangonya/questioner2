@@ -67,10 +67,20 @@ class AdminProfile(Resource):
         meetups = SelectDataFromDb.conditional_where_select_all("meetups", "creator", creator["id"])
         meetups = json.dumps(meetups, default=str)
 
+        questions_query = ('SELECT q.title q_title, '
+                           'q.created_on q_date '
+                           'FROM questions q '
+                           'LEFT JOIN meetups m ON q.meetup = m.id '
+                           'WHERE m.creator = {} '
+                           'ORDER BY q.votes ASC'.format(creator["id"]))
+        InitDb.cursor.execute(questions_query)
+        questions = json.dumps(InitDb.cursor.fetchall(), default=str)
+
         response = {
             "status": 200,
             "data": [{
                 "meetups": json.loads(meetups),
+                "questions": json.loads(questions),
                 "admin_email": user,
                 "is_admin": creator["is_admin"],
                 "meetups_posted": len(json.loads(meetups))
