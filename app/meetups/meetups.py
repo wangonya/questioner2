@@ -16,6 +16,10 @@ class Meetups(Resource):
                         type=str,
                         required=True,
                         nullable=False,)
+    parser.add_argument("details",
+                        type=str,
+                        required=True,
+                        nullable=False, )
     parser.add_argument("location",
                         type=str,
                         required=True,
@@ -59,6 +63,7 @@ class PostMeetups(Resource):
         MeetupValidators.check_creator_is_admin(creator)
 
         title = data["title"]
+        details = data["details"]
         creator_id = creator["id"]
         location = data["location"]
         happening_on = data["happening_on"]
@@ -67,7 +72,7 @@ class PostMeetups(Resource):
 
         MeetupValidators.check_duplicate_meetup(title, happening_on)
 
-        meetup = MeetupModel(title, creator_id, location,
+        meetup = MeetupModel(title, details, creator_id, location,
                              happening_on, tags, image)
         meetup.save_meetup_to_db()
 
@@ -76,6 +81,7 @@ class PostMeetups(Resource):
             "message": "meetup created successfully",
             "data": [{
                 "title": title,
+                "details": details,
                 "location": location,
                 "happeningOn": happening_on,
                 "tags": tags,
@@ -97,6 +103,23 @@ class GetSpecificMeetup(Resource):
         response = {
             "status": 200,
             "data": json.loads(meetup)
+        }
+
+        return response, 200
+
+
+class GetSpecificMeetupQuestion(Resource):
+    """get specific meetup question"""
+    @staticmethod
+    def get(q_id):
+        """send a GET to the specific meetup endpoint"""
+
+        question = MeetupModel.get_specific_meetup_question(q_id)
+        question = json.dumps(question, default=str)
+
+        response = {
+            "status": 200,
+            "data": json.loads(question)
         }
 
         return response, 200
