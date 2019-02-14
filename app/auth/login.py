@@ -3,6 +3,7 @@ from flask_jwt_extended import create_access_token
 
 from ..utils.validators import AuthValidators
 from ..auth.models import AuthModel
+from ..db.select import SelectDataFromDb
 
 
 class Login(Resource):
@@ -28,11 +29,23 @@ class Login(Resource):
 
         AuthModel.verify_hash(data["email"], data["password"])
 
-        response = {
-            "status": 200,
-            "message": "user logged in successfully",
-            "data": [{
-                "access_token": create_access_token(data["email"])
-            }]}
+        is_admin = SelectDataFromDb.conditional_where_and_select("users", "email", data["email"], "is_admin", True)
+
+        try:
+            response = {
+                "status": 200,
+                "message": "user logged in successfully",
+                "data": [{
+                    "access_token": create_access_token(data["email"]),
+                    "is_admin": is_admin["is_admin"]
+                }]}
+        except TypeError:
+            response = {
+                "status": 200,
+                "message": "user logged in successfully",
+                "data": [{
+                    "access_token": create_access_token(data["email"]),
+                    "is_admin": False
+                }]}
 
         return response, 200
