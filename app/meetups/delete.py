@@ -18,8 +18,8 @@ class DeleteMeetup(Resource):
 
         MeetupValidators.check_meetup_exists(m_id)
 
-        if not userid["id"] == meetup["creator"]:
+        if userid["id"] != meetup[0]["creator"]:
             raise DeleteProtectedError
         else:
             MeetupModel.delete_meetup(m_id)
-            return {"status": 200, "data": ["Delete successful"]}, 200
+            return {"status": 200, "data": [{"message": "Delete successful"}]}, 200
