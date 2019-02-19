@@ -35,7 +35,17 @@ class Meetups(Resource):
 
     @staticmethod
     def get():
-        """do a GET to upcoming meetups endpoint"""
+        """
+        GET Upcoming Meetups
+        ---
+        tags:
+        - meetups
+        responses:
+          200:
+            description: OK
+          404:
+            description: The data you requested for was not found
+        """
         meetups = MeetupModel.get_upcoming_meetups()
         meetups = json.dumps(meetups, default=str)
 
@@ -52,7 +62,53 @@ class PostMeetups(Resource):
     @staticmethod
     @jwt_required
     def post():
-        """do a POST to the meetups endpoint"""
+        """
+        Post Meetup
+        ---
+            tags:
+            - meetups
+            consumes:
+            - application/json
+            parameters:
+            - in: header
+              name: Authorization
+              description: JWT token
+              type: string
+              required: true
+            - in: body
+              name: Create meetup
+              description: Create new meetup
+              schema:
+                id: Post Meetup
+                type: object
+                required:
+                - title
+                - details
+                - location
+                - happening_on
+                - image
+                - tags
+                properties:
+                  title:
+                    type: string
+                  details:
+                    type: string
+                  location:
+                    type: string
+                  happening_on:
+                    type: string
+                  image:
+                    type: string
+                  tags:
+                    type: string
+            responses:
+              201:
+                description: meetup created successfully
+              400:
+                description: Invalid data format
+              401:
+                description: Only an admin can create a meetup
+        """
         data = Meetups.parser.parse_args()
 
         GeneralValidators.non_empty_string(**data)
@@ -94,7 +150,23 @@ class GetSpecificMeetup(Resource):
     """get specific meetup"""
     @staticmethod
     def get(m_id):
-        """send a GET to the specific meetup endpoint"""
+        """
+        GET Specific Meetup
+        ---
+        tags:
+        - meetups
+        parameters:
+        - in: path
+          name: m_id
+          type: int
+          required: true
+          description: The id of the meetup to view
+        responses:
+          200:
+            description: OK
+          404:
+            description: No meetup matching the id passed was found
+        """
         MeetupValidators.check_meetup_exists(m_id)
 
         meetup = MeetupModel.get_specific_meetup(m_id)
