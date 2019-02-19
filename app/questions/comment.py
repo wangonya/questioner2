@@ -17,7 +17,43 @@ class Comment(Resource):
 
     @jwt_required
     def post(self, q_id):
-        """do a POST on the answers endpoint"""
+        """
+        Comment on a question
+        ---
+            tags:
+            - questions
+            consumes:
+            - application/json
+            parameters:
+            - in: header
+              name: Authorization
+              description: JWT token
+              type: string
+              required: true
+            - in: path
+              name: q_id
+              type: int
+              required: true
+              description: The id of the question to comment on
+            - in: body
+              name: Add Comment
+              description: Comment on a question
+              schema:
+                id: Comment on a question
+                type: object
+                required:
+                - body
+                properties:
+                  body:
+                    type: string
+            responses:
+              201:
+                description: answer submitted successfully
+              404:
+                description: No question matching the id passed was found
+              409:
+                description: The data provided already exists in the resource
+        """
         data = self.parser.parse_args()
         body = data["body"]
 
@@ -39,7 +75,7 @@ class Comment(Resource):
             "data": [{
                 "body": question["body"],
                 "title": question["title"],
-                "mcomment": body,
+                "comment": body,
                 "question": q_id
             }]}
 
