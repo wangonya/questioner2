@@ -21,7 +21,46 @@ class PostQuestion(Resource):
 
     @jwt_required
     def post(self, m_id):
-        """do a POST on the questions endpoint"""
+        """
+        Post Question
+        ---
+            tags:
+            - questions
+            consumes:
+            - application/json
+            parameters:
+            - in: header
+              name: Authorization
+              description: JWT token
+              type: string
+              required: true
+            - in: path
+              name: m_id
+              type: int
+              required: true
+              description: The id of the meetup to add question
+            - in: body
+              name: Create question
+              description: Create new question
+              schema:
+                id: Post Question
+                type: object
+                required:
+                - title
+                - body
+                properties:
+                  title:
+                    type: string
+                  body:
+                    type: string
+            responses:
+              201:
+                description: question submitted successfully
+              400:
+                description: Invalid data format
+              404:
+                description: No meetup matching the id passed was found
+        """
         data = self.parser.parse_args()
         title = data["title"]
         body = data["body"]
