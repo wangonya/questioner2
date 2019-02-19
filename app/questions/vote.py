@@ -11,7 +11,33 @@ class Upvote(Resource):
     @staticmethod
     @jwt_required
     def patch(q_id):
-        """do a PATCH on upvote question endpoint"""
+        """
+        Upvote on a question
+        ---
+            tags:
+            - questions
+            consumes:
+            - application/json
+            parameters:
+            - in: header
+              name: Authorization
+              description: JWT token
+              type: string
+              required: true
+            - in: path
+              name: q_id
+              type: int
+              required: true
+              description: The id of the question to vote on
+            - in: body
+              name: Upvote on question
+              description: Upvote on question
+            responses:
+              201:
+                description: vote added successfully
+              404:
+                description: No question matching the id passed was found
+        """
         QuestionValidators.check_question_exists(q_id)
         user = get_jwt_identity()
         voter = SelectDataFromDb.conditional_where_select("users", "email", user)
@@ -44,7 +70,33 @@ class Downvote(Resource):
     @staticmethod
     @jwt_required
     def patch(q_id):
-        """do a PATCH on upvote question endpoint"""
+        """
+        Downvote on a question
+        ---
+            tags:
+            - questions
+            consumes:
+            - application/json
+            parameters:
+            - in: header
+              name: Authorization
+              description: JWT token
+              type: string
+              required: true
+            - in: path
+              name: q_id
+              type: int
+              required: true
+              description: The id of the question to vote on
+            - in: body
+              name: Downvote on question
+              description: Downvote on question
+            responses:
+              201:
+                description: vote added successfully
+              404:
+                description: No question matching the id passed was found
+        """
         QuestionValidators.check_question_exists(q_id)
         user = get_jwt_identity()
         voter = SelectDataFromDb.conditional_where_select("users", "email", user)
