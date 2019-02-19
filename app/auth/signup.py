@@ -29,7 +29,45 @@ class Signup(Resource):
 
     @staticmethod
     def post():
-        """do a POST to signup endpoint"""
+        """
+        Register User
+        ---
+            tags:
+            - auth
+            consumes:
+            - application/json
+            parameters:
+            - in: body
+              name: Register a new user
+              description: Signup new user with their email and password
+              schema:
+                id: Register User
+                type: object
+                required:
+                - email
+                - password
+                - firstname
+                - lastname
+                - phonenumber
+                properties:
+                  firstname:
+                    type: string
+                  lastname:
+                    type: string
+                  email:
+                    type: string
+                  password:
+                    type: string
+                  phonenumber:
+                    type: string
+            responses:
+              201:
+                description: User registered successfully
+              400:
+                description: Invalid data format
+              409:
+                description: A user with that email already exists
+        """
         data = Signup.parser.parse_args()
 
         GeneralValidators.non_empty_string(**data)
