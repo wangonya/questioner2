@@ -20,7 +20,36 @@ class Login(Resource):
 
     @staticmethod
     def post():
-        """do a POST to login endpoint"""
+        """
+        Login User
+        ---
+            tags:
+            - auth
+            consumes:
+            - application/json
+            parameters:
+            - in: body
+              name: Login User
+              description: Login user with their email and password
+              schema:
+                id: Login User
+                type: object
+                required:
+                - email
+                - password
+                properties:
+                  email:
+                    type: string
+                  password:
+                    type: string
+            responses:
+              200:
+                description: User logged in successfully
+              400:
+                description: Invalid data format
+              401:
+                description: Invalid login details provided
+        """
         data = Login.parser.parse_args()
 
         AuthValidators.check_email_format(data["email"])
