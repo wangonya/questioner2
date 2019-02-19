@@ -12,6 +12,25 @@ class DeleteMeetup(Resource):
     @staticmethod
     @jwt_required
     def delete(m_id):
+        """
+        DELETE Specific Meetup
+        ---
+        tags:
+        - meetups
+        parameters:
+        - in: path
+          name: m_id
+          type: int
+          required: true
+          description: The id of the meetup to delete
+        responses:
+          200:
+            description: OK
+          401:
+            description: Only the admin that created this meetup can delete it
+          404:
+            description: No meetup matching the id passed was found
+        """
         user = get_jwt_identity()
         userid = SelectDataFromDb.conditional_where_select("users", "email", user)
         meetup = MeetupModel.get_specific_meetup(m_id)

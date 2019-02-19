@@ -17,7 +17,45 @@ class Rsvp(Resource):
 
     @jwt_required
     def post(self, m_id):
-        """do POST on rsvp endpoint"""
+        """
+        RSVP Meetup
+        ---
+            tags:
+            - meetups
+            consumes:
+            - application/json
+            parameters:
+            - in: header
+              name: Authorization
+              description: JWT token
+              type: string
+              required: true
+            - in: path
+              name: m_id
+              type: int
+              required: true
+              description: The id of the meetup to rsvp
+            - in: body
+              name: RSVP meetup
+              description: Rsvp for a meetup
+              schema:
+                id: RSVP Meetup
+                type: object
+                required:
+                - status
+                properties:
+                  status:
+                    type: string
+            responses:
+              201:
+                description: meetup rsvp successful
+              200:
+                description: meetup rsvp update successful
+              400:
+                description: Rsvp status can only be 'yes', 'no' or 'maybe'
+              404:
+                description: No meetup matching the id passed was found
+        """
         data = self.parser.parse_args()
         status = data["status"]
         user = get_jwt_identity()

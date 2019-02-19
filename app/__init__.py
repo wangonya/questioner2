@@ -3,6 +3,7 @@ from flask import Flask, Blueprint, jsonify
 from flask_restful import Api, Resource
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
+from flasgger import Swagger
 
 from config import APP_CONFIG
 from .db import InitDb
@@ -27,6 +28,7 @@ def create_app(default_config):
     jwt = JWTManager(app)
     app.config['JWT_SECRET_KEY'] = 'questioner-jwt-secret'
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=2)
+    app.config['SWAGGER'] = {'title': 'Questioner', 'uiversion': 3}
     CORS(app)
 
     app.register_blueprint(api_bp, url_prefix='/api/v2')
@@ -52,6 +54,25 @@ def create_app(default_config):
         def get():
             """test get -- just shows hello world for testing"""
             return "Hello World!"
+
+    template = {
+        "swagger": "3.0",
+        "info": {
+            "title": "Questioner",
+            "description": "Crowd-source questions for a meetup. Questioner helps the meetup organizer prioritize "
+                           "questions to be answered. Other users can vote on asked questions and they bubble to the "
+                           "top or bottom of the log.",
+            "version": "2.0",
+            "email": "kwangonya@gmail.com",
+            "url": "wangonya.com",
+        },
+        "host": "questioner2.herokuapp.com",
+        "schemes": [
+            "https"
+        ]
+    }
+
+    Swagger(app, template=template)
 
     api.add_resource(HelloWorld, '/', strict_slashes=False)
     api.add_resource(Signup, '/auth/signup', strict_slashes=False)
