@@ -47,8 +47,10 @@ class Upvote(Resource):
         vote = VoteModel(voter["id"], q_id, 1)
         if not SelectDataFromDb.conditional_where_and_select("votes", "creator", voter["id"], "question", q_id):
             vote.save_vote_to_db()
+            VoteModel.update_questions_vote_count(q_id)
         else:
             VoteModel.delete_vote(voter, q_id)
+            VoteModel.update_questions_vote_count(q_id)
         votes = VoteModel.sum_votes(q_id)
 
         response = {

@@ -71,3 +71,13 @@ class VoteModel:
                               'WHERE question = (%s)', (q_id,))
         votes = InitDb.cursor.fetchone()
         return votes
+
+    @staticmethod
+    def update_questions_vote_count(q_id):
+        """update questions vote count"""
+        votes = VoteModel.sum_votes(q_id)
+        update_query = ('UPDATE questions '
+                        'SET votes = (%s)'
+                        'WHERE id = (%s)')
+        InitDb.cursor.execute(update_query,
+                              (votes["votes"], q_id))
